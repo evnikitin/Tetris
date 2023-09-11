@@ -1,0 +1,40 @@
+{
+  "name": "contracts",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "contracts/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/contracts",
+        "main": "contracts/src/index.ts",
+        "tsConfig": "contracts/tsconfig.lib.json",
+        "assets": ["contracts/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["contracts/**/*.ts", "contracts/package.json"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "contracts/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}
