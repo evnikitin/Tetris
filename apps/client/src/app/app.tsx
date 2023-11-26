@@ -12,7 +12,7 @@ import { Rating } from '../components/Rating/Rating';
 import { Control } from '../components/Control/Control';
 import { AboutDevelopers } from '../components/AboutDevelopers/AboutDevelopers';
 import { AboutSystem } from '../components/RoutesComponents/AboutSystem';
-import { RequireAdminRole } from '../ustils/RequireAdminRole';
+import { RequireAdminRole } from '../utils/RequireAdminRole';
 import { Signup } from '../components/Auth/Signup';
 
 export function App() {

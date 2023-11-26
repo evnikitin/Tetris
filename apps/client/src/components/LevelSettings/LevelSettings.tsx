@@ -1,25 +1,59 @@
 import { Box, Paper, Typography, RadioGroup, FormControlLabel, Radio, Button , Grid, TextField, Switch, Select, MenuItem, SelectChangeEvent} from '@mui/material'
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 export const LevelSettings = () => {
-  const [selectedValue, setSelectedValue] = useState<string>('1');
-  const [nextFigureVisibility, setNextFigureVisibility] = useState<boolean>(true);
-  const [gridVisibility, setGridVisibility] = useState<boolean>(true);
-  const [selectedOption, setSelectedOption] = useState('');
-
   const options = [
     { value: '8 x 16', label: '8 x 16' },
     { value: '10 x 20', label: '10 x 20' },
     { value: '9 x 30', label: '9 x 30' },
   ];
 
-  const handleChange = (event: SelectChangeEvent<string>) => {
-    setSelectedOption(event.target.value as string);
+  const [level, setLevel] = useState<string>('1');
+  const [sizeContainer, setSizeContainer] = useState<string>(options[0].value);
+  const [tick, setTick] = useState<number>(0);
+  const [time, setTime] = useState<number>(0);
+  const [points, setPoints] = useState<number>(0);
+  const [nextFigureVisibility, setNextFigureVisibility] = useState<boolean>(true);
+  const [gridVisibility, setGridVisibility] = useState<boolean>(false);
+  const navigate = useNavigate();
+  
+  const [TickError, setTickError] = useState<string>("");
+    
+  const handleChangeSizeContainer = (event: SelectChangeEvent<string>) => {
+    setSizeContainer(event.target.value);
+  };
+
+  const handleChangeTick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTick(Number(event.target.value));
+  };
+
+  const handleChangePoints = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPoints(Number(event.target.value));
+  };
+
+  const handleChangeTime = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTime(Number(event.target.value));
   };
 
   const handleSaveSettings = () => {
-    //
+    if( tick <= 1000 && tick >= 200) {
+      setTickError("");
+      console.log({
+        level,
+        sizeContainer,
+        tick,
+        time: time === 0 ? 100 : time , //100 значение из бд
+        points: points === 0 ? 100 : points , //100 значение из бд,
+        nextFigureVisibility
+      })
+      navigate(-1);  
+    } else {
+      setTickError("Тик выходит за пределы диапазона 200-1000")
+    } 
+    console.log(tick)   
   };
+
   const handleChangeNextFigureVisibility = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNextFigureVisibility(event.target.checked );
    };
@@ -41,7 +75,7 @@ export const LevelSettings = () => {
             <Typography fontWeight='bold'>Уровень для настройки</Typography>
             <Typography>Выберите уровень, настройки которого хотите изменить</Typography>
             <Box display='flex' justifyContent='space-between' alignItems='flex-end'>               
-               <RadioGroup value={selectedValue} onChange={(e)=>{setSelectedValue(e.target.value);}}>
+               <RadioGroup value={level} onChange={(e)=>{setLevel(e.target.value);}}>
                   <FormControlLabel value="1" control={<Radio />} label="Первый уровень" />
                   <FormControlLabel value="2" control={<Radio />} label="Второй уровень" />
                   <FormControlLabel value="3" control={<Radio />} label="Третий уровень" />
@@ -54,7 +88,7 @@ export const LevelSettings = () => {
                     <Typography variant='h6'>Выберите стакан</Typography>
                   </Grid> 
                   <Grid item xs={2}>
-                  <Select value={selectedOption} onChange={handleChange}>
+                  <Select value={sizeContainer} onChange={handleChangeSizeContainer}>
                     {options.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
@@ -67,37 +101,47 @@ export const LevelSettings = () => {
               <Typography mb={2}>Введите значаения скорости, очков и времени</Typography>     
               <Grid  container direction="column" spacing={3}  sx={{width : '100%'}}>
                 <Grid item container justifyContent="flex-start" alignItems="center">
-                  <Grid item xs={10}>
-                    <Typography variant='h6'>Значение тика (время между двумя перемещениями фигуры)</Typography>
+                  <Grid item xs={9}>
+                    <Typography variant='h6'>Значение тика (время между перемещениями фигуры)</Typography>
+                    <Typography color='red'>{TickError}</Typography>
                   </Grid>                  
                   <Grid item xs={2}>
                   <TextField
                     type="number"
                     size="small"
+                    onChange={handleChangeTick}
                   />       
-                  </Grid> 
+                  </Grid>
+                  <Grid  item xs={1}>
+                    <Typography  textAlign="center">мс</Typography>
+                  </Grid>     
                 </Grid>
                 <Grid item container justifyContent="flex-start" alignItems="center">
-                  <Grid item xs={10}>
+                  <Grid item xs={9}>
                     <Typography variant='h6'>Количество очков для перехода на новый уровень</Typography>
                   </Grid> 
                   <Grid item xs={2}>
                     <TextField
                       type="number"
                       size="small"
+                      onChange={handleChangePoints}
                     />      
                   </Grid>                        
                 </Grid>
                 <Grid item container mb={2} justifyContent="flex-start" alignItems="center">
-                  <Grid item xs={10}>
+                  <Grid item xs={9}>
                     <Typography variant='h6'>Время для перехода на новый уровень</Typography>
                   </Grid> 
                   <Grid item xs={2}>
                     <TextField
                       type="number"
                       size="small"
+                      onChange={handleChangeTime}
                     />      
-                  </Grid>                        
+                  </Grid>
+                  <Grid  item xs={1}>
+                    <Typography  textAlign="center">секунд</Typography>
+                  </Grid>                            
                 </Grid>
               </Grid> 
               <Typography gutterBottom fontWeight='bold'>Следующая фигура и сетка</Typography>
