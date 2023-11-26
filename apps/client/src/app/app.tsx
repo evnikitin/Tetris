@@ -7,12 +7,12 @@ import { AddContainer } from '../components/AddConrainer/AddContainer';
 import { AddFigure } from '../components/AddFigure/AddFigure';
 import { LevelSettings } from '../components/LevelSettings/LevelSettings';
 import { Settings } from '../components/Settings/Settings';
-import { Game } from '../components/RoutesComponents/Game';
+import { Game } from '../components/Game/Game';
 import { Rating } from '../components/Rating/Rating';
 import { Control } from '../components/Control/Control';
 import { AboutDevelopers } from '../components/AboutDevelopers/AboutDevelopers';
 import { AboutSystem } from '../components/RoutesComponents/AboutSystem';
-import { RequireAdminRole } from '../ustils/RequireAdminRole';
+import { RequireAdminRole } from '../utils/RequireAdminRole';
 import { Signup } from '../components/Auth/Signup';
 
 export function App() {

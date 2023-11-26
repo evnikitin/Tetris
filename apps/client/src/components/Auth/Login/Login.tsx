@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import {
   Section, Container, Card,
 } from '../FormStyled';
-import { Messages } from '../../../ustils/messages';
+import { Messages } from '../../../utils/messages';
 
 const formSchema = z
   .object({

@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   Section, Container, Card,
 } from '../FormStyled';
-import { Messages } from '../../../ustils/messages';
+import { Messages } from '../../../utils/messages';
 
 const formSchema = z.object({
   name: z

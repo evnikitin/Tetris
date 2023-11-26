@@ -1,7 +1,8 @@
 import React from 'react'
+import { Play } from './Play'
 
 export const Game = () => {
   return (
-    <div>Game</div>
+    <Play rows={16} columns={10} />
   )
 }
