@@ -1,7 +1,7 @@
-import Menu from "./Menu";
-import { Tetris } from "./Tetris/Tetris";
+import Menu from "../Menu/Menu";
+import { Tetris } from "../Tetris/Tetris";
 
-import { useGameOver } from "../../hooks/useGameOver";
+import { useGameOver } from "../../../hooks/useGameOver";
 import { Box, Paper } from "@mui/material";
 
 export const Play = ({ rows, columns }: {rows: number, columns: number}) => {

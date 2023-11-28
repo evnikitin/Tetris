@@ -1,4 +1,4 @@
-import { Button, styled } from "@mui/material";
+import { Box, Button, styled } from "@mui/material";
 import React, { MouseEventHandler } from "react";
 
 
@@ -6,11 +6,6 @@ interface MenuProps {
   onClick: MouseEventHandler<HTMLButtonElement>;
 }
 
-const ButtonWrapper = styled('div')({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-});
 
 const MenuButton = styled(Button)({
    padding: '40px 80px',
@@ -24,11 +19,11 @@ const MenuButton = styled(Button)({
 
 
 const Menu: React.FC<MenuProps> = ({ onClick }) => (
-  <ButtonWrapper>
+  <Box display='flex' justifyContent='center' alignItems='center'>
     <MenuButton onClick={onClick}>
       Начать игру
     </MenuButton>
-  </ButtonWrapper>
+  </Box>
 );
 
 export default Menu;

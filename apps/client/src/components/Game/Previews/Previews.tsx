@@ -9,7 +9,6 @@ interface myProps{
 }
 
 const Previews = ({ tetrominoes } :myProps ) => {
-  // We want everything except the last one
   const previewTetrominoes = tetrominoes
     .slice(1 - tetrominoes.length)
     .reverse();

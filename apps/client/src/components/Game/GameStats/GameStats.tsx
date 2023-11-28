@@ -5,22 +5,24 @@ interface MyProps{
    gameStats:{
       level: number;
       linesCompleted: number;
-      linesPerLevel: number;
+      pointsPerLevel: number;
       points: number;
   }
 }
 
 const GameStats = ({ gameStats }: MyProps) => {
-  const { level, points, linesCompleted, linesPerLevel } = gameStats;
-  const linesToLevel = linesPerLevel - linesCompleted;
+  const { level, points, linesCompleted, pointsPerLevel } = gameStats;
+  const pointsToLevel = pointsPerLevel - points;
 
   return (
     <GameStatsStyled>
-      <li>Level</li>
+      <li>Уровень</li>
       <li>{level}</li>
-      <li>Lines to level</li>
-      <li>{linesToLevel}</li>
-      <li>Points</li>
+      <li>Линии</li>
+      <li>{linesCompleted}</li>
+      <li>Очков до след уровня</li>
+      <li>{pointsToLevel}</li>
+      <li>Очки</li>
       <li>{points}</li>
     </GameStatsStyled>
   );

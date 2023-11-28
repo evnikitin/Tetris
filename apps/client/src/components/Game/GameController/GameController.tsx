@@ -9,6 +9,7 @@ import { playerController } from "../../../utils/PlayerController";
 
 import { useInterval } from "../../../hooks/useInterval";
 import { useDropTime } from "../../../hooks/useDropTime";
+import { useRef } from "react";
 
 export interface GameController{
    board: Board,
@@ -20,6 +21,7 @@ export interface GameController{
 
 const times = [1000,800,500];
 
+
 const GameController = ({
   board,
   gameStats,
@@ -30,6 +32,15 @@ const GameController = ({
   const [dropTime, pauseDropTime, resumeDropTime] = useDropTime({
     gameStats, times
   });
+
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  const handleBlur = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
 
   useInterval(() => {
     handleInput({ action: Action.SlowDrop });
@@ -75,6 +86,8 @@ const GameController = ({
 
   return (
     <InputStyled
+      ref={inputRef}
+      onBlur={handleBlur}
       type="text"
       onKeyDown={onKeyDown}
       onKeyUp={onKeyUp}

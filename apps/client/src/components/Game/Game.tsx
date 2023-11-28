@@ -1,5 +1,5 @@
 import React from 'react'
-import { Play } from './Play'
+import { Play } from './Play/Play'
 
 export const Game = () => {
   return (
