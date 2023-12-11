@@ -84,7 +84,7 @@ export const AddFigure = () => {
      while (index < cluster.length) {
        const cell = cluster[index];
        filledCells = filledCells.filter(otherCell => {
-         if (cell!==undefined&&(
+         if (cell !== undefined && (
            (otherCell[0] === cell[0] && Math.abs(otherCell[1] - cell[1]) === 1) ||
            (otherCell[1] === cell[1] && Math.abs(otherCell[0] - cell[0]) === 1)
          )) {

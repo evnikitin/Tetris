@@ -26,7 +26,7 @@ const Preview = ({ tetromino, index } : {tetromino : Tetromino, index: number}) 
       <PreviewBoard>
         {board.rows.map((row, y) =>
           row.map((cell, x) => (
-            <BoardCell key={x * board.size.columns + x} cell={cell} />
+            <BoardCell key={x * board.size.columns + x} cell={cell}  gridVisibility = {false}/>
           ))
         )}
       </PreviewBoard>

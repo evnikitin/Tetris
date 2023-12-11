@@ -1,8 +1,13 @@
 import React from 'react'
 import { Play } from './Play/Play'
+import { UserSettings } from '../../hooks/useSettings'
 
-export const Game = () => {
+interface GameProps {
+  settings: UserSettings
+}
+
+export const Game = ( {settings} : GameProps) => {
   return (
-    <Play rows={16} columns={10} />
+    <Play settings={settings} rows={16} columns={10} />
   )
 }

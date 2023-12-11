@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   Section, Container, Card,
 } from '../FormStyled';
+import { useSignupMutation } from '../../../store/slices/ApiSlices';
 import { Messages } from '../../../utils/messages';
 
 const formSchema = z.object({
@@ -32,7 +33,8 @@ type FormSchema = z.infer<typeof formSchema>;
 
 export function Signup() {
   const navigate = useNavigate();
-  const [errorMessage] = useState('');
+  const [signup] = useSignupMutation();
+  const [errorMessage, setErrorMessage] = useState('');
 
   const {
     register,
@@ -42,8 +44,12 @@ export function Signup() {
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
 
   const onSubmit: SubmitHandler<FormSchema> = async (data) => {
-    console.log(data);
-      navigate(-1);    
+    try {
+      await signup(data).unwrap();
+      navigate(-1); // Переход осуществляется на страницу signin
+    } catch (err) {
+      setErrorMessage((err as Error).message);
+    }   
   };
 
 

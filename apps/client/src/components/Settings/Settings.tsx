@@ -1,19 +1,34 @@
 import { Box, Paper, Typography, RadioGroup, FormControlLabel, Radio, Button , Switch, Grid} from '@mui/material'
 import React, { useState } from 'react'
+import { UserSettings } from '../../hooks/useSettings';
+import { useNavigate } from 'react-router-dom';
 
-export const Settings = () => {
-  const [selectedValue, setSelectedValue] = useState<string>('1');
-  const [music, setMusic] = useState<boolean>(true);
-  const [gridVisibility, setGridVisibility] = useState<boolean>(true);
-  const [selectedColor, setSelectedColor] = useState<string>('Red');
-  const [selectedVariantValue, setSelectedVariantValue] = useState<string>('points');
+interface SettingsProps {
+  settings: UserSettings;
+  setSettings: React.Dispatch<React.SetStateAction<UserSettings>>;
+}
+
+export const Settings = ( {settings, setSettings } : SettingsProps) => {
+  const [selectedValue, setSelectedValue] = useState<number>(settings.level);
+  const [music, setMusic] = useState<boolean>(settings.music);
+  const [gridVisibility, setGridVisibility] = useState<boolean>(settings.gridVisibility);
+  const [selectedColor, setSelectedColor] = useState<string>(settings.color);
+  const [selectedVariantValue, setSelectedVariantValue] = useState<string>(settings.variant);
+  const navigate = useNavigate();
 
   const ColorBox = ({color}:{color:string}) => (
     <Box width={90} height={90} bgcolor={color} mb={1} />
   )
 
   const handleSaveSettings = () => {
-    //
+    setSettings({
+      level: Number(selectedValue),
+      music,
+      gridVisibility,
+      color: selectedColor,
+      variant: selectedVariantValue
+    })
+    navigate(-1);
   };
   const handleChangeMusic = (event: React.ChangeEvent<HTMLInputElement>) => {
    setMusic(event.target.checked );
@@ -36,7 +51,7 @@ export const Settings = () => {
             <Typography fontWeight='bold'>Уровень сложности игры</Typography>
             <Typography>Выберите уровень, с которого начинается игра</Typography>
             <Box display='flex' justifyContent='space-between' alignItems='flex-end'>               
-               <RadioGroup value={selectedValue} onChange={(e)=>{setSelectedValue(e.target.value);}}>
+               <RadioGroup value={selectedValue} onChange={(e)=>{setSelectedValue(Number(e.target.value));}}>
                   <FormControlLabel value="1" control={<Radio />} label="Первый уровень" />
                   <FormControlLabel value="2" control={<Radio />} label="Второй уровень" />
                   <FormControlLabel value="3" control={<Radio />} label="Третий уровень" />
@@ -44,11 +59,11 @@ export const Settings = () => {
             </Box>   
             <Typography gutterBottom fontWeight='bold'>Выберите цвет фона</Typography>
               <RadioGroup sx={{display: 'flex', flexDirection: 'row'}} value={selectedColor} onChange={(e)=>{setSelectedColor(e.target.value);}}>
-                <FormControlLabel sx={{display: 'flex', flexDirection: 'column-reverse', margin: '0 20px 0 0'}} value="Red" control={<Radio />} label={<ColorBox  color="Red" />} />
+                <FormControlLabel sx={{display: 'flex', flexDirection: 'column-reverse', margin: '0 20px 0 0'}} value="rgb(32, 0, 64)" control={<Radio />} label={<ColorBox  color="rgb(32, 0, 64)" />} />
                 <FormControlLabel sx={{display: 'flex', flexDirection: 'column-reverse', margin: '0 20px 0 0'}}  value="Green" control={<Radio />} label={<ColorBox color="Green"/>} />
                 <FormControlLabel sx={{display: 'flex', flexDirection: 'column-reverse', margin: '0 20px 0 0'}} value="Blue" control={<Radio />} label={<ColorBox color="Blue" />} />
-                <FormControlLabel sx={{display: 'flex', flexDirection: 'column-reverse', margin: '0 20px 0 0'}} value="Blue" control={<Radio />} label={<ColorBox color="Pink" />} />
-                <FormControlLabel sx={{display: 'flex', flexDirection: 'column-reverse', margin: '0 20px 0 0'}} value="Blue" control={<Radio />} label={<ColorBox color="Yellow" />} />
+                <FormControlLabel sx={{display: 'flex', flexDirection: 'column-reverse', margin: '0 20px 0 0'}} value="Pink" control={<Radio />} label={<ColorBox color="Pink" />} />
+                <FormControlLabel sx={{display: 'flex', flexDirection: 'column-reverse', margin: '0 20px 0 0'}} value="Yellow" control={<Radio />} label={<ColorBox color="Yellow" />} />
               </RadioGroup> 
               <Typography fontWeight='bold'>Способ определения результата</Typography>
               <Typography>Выберите как Вы хотите играть: на время или на очки</Typography>

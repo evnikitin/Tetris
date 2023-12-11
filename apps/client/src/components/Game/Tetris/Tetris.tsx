@@ -8,15 +8,14 @@ import { useGameStats } from '../../../hooks/useGameStats';
 import GameController from '../GameController/GameController';
 import GameStats from '../GameStats/GameStats';
 import Previews from '../Previews/Previews';
-import { useEffect, useState } from 'react';
+import { UserSettings } from '../../../hooks/useSettings';
 
 export interface myType {
   tetrominoes: (typeof Cell)[];
 }
 
-export const Tetris = ({ rows, columns, setGameOver } : {rows: number, columns: number, setGameOver: SetGameOverFn}) => {
-  const [gameStats, addLinesCleared] = useGameStats();
-  const [time, setTime] = useState<number>(0);
+export const Tetris = ({ settings, rows, columns, setGameOver } : {settings: UserSettings, rows: number, columns: number, setGameOver: SetGameOverFn}) => {
+  const [gameStats, addLinesCleared, timeChange] = useGameStats(settings.level ,[10,100], [100,500], settings.variant);
   const [player, setPlayer, resetPlayer] = usePlayer();
   const [board] = useBoard({
     rows,
@@ -26,24 +25,16 @@ export const Tetris = ({ rows, columns, setGameOver } : {rows: number, columns: 
     addLinesCleared
   });
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTime(time + 1);
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [time, setTime]);  
+    
 
   return (
     <Box display='flex' alignItems='end' gap={2}>
           <Box height='600px' display='flex' flexDirection='column' justifyContent='space-between'>
             <Previews tetrominoes={player.tetrominoes} /> 
-            <GameStats gameStats={gameStats} />
+            <GameStats gameStats={gameStats} timeChange = {timeChange} />
           </Box>          
           <Box position='relative'>
-            <Board board={board} />
+            <Board settings = {settings} board={board} />
             <GameController
               board={board}
               gameStats={gameStats}

@@ -21,7 +21,7 @@ export const TETROMINOES = [
    {
      shape: [
       [0, 1, 0],
-      [0, 1, 0],
+      [1, 1, 1],
       [0, 1, 1]
      ],
      color: `orange`
@@ -65,12 +65,10 @@ export const randomTetromino = () => {
  };
 
 export const rotate = ({ piece, direction } : {piece: number[][], direction: number} ) => {
-  // Transpose rows and columns
   const newPiece = piece.map((_, index) =>
     piece.map((column) => column[index])
   );
 
-  // Reverse rows to get a rotated matrix
   if (direction > 0) return newPiece.map((row) => row.reverse());
 
   return newPiece.reverse();

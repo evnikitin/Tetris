@@ -22,8 +22,6 @@ export interface Player {
 
 const buildPlayer = (previous?: Player): Player=> {
   let tetrominoes : Tetromino[];
-
-  console.log(previous)
   if (previous) {
     tetrominoes = [...previous.tetrominoes];
     tetrominoes.unshift(randomTetromino());

@@ -3,8 +3,10 @@ import { Tetris } from "../Tetris/Tetris";
 
 import { useGameOver } from "../../../hooks/useGameOver";
 import { Box, Paper } from "@mui/material";
+import { UserSettings } from '../../../hooks/useSettings'
 
-export const Play = ({ rows, columns }: {rows: number, columns: number}) => {
+
+export const Play = ({ rows, columns, settings }: {rows: number, columns: number, settings: UserSettings}) => {
   const [gameOver, setGameOver, resetGameOver] = useGameOver();
   const start = () => resetGameOver();
 
@@ -20,7 +22,7 @@ export const Play = ({ rows, columns }: {rows: number, columns: number}) => {
       {gameOver ? (
          <Menu onClick={start} />       
       ) : (
-          <Tetris rows={rows} columns={columns} setGameOver={setGameOver} />         
+          <Tetris settings= {settings} rows={rows} columns={columns} setGameOver={setGameOver} />         
       )}
     </Paper>
    </Box>
