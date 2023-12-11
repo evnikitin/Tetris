@@ -68,7 +68,7 @@ export const Settings = ( {settings, setSettings } : SettingsProps) => {
               <Typography fontWeight='bold'>Способ определения результата</Typography>
               <Typography>Выберите как Вы хотите играть: на время или на очки</Typography>
               <Box display='flex' justifyContent='space-between' alignItems='flex-end'>               
-                <RadioGroup value={selectedVariantValue} onChange={(e)=>{setSelectedVariantValue(e.target.value);}}>
+                <RadioGroup value={variantValue} onChange={(e)=>{setVariantValue(e.target.value);}}>
                     <FormControlLabel value="points" control={<Radio />} label="На очки" />
                     <FormControlLabel value="time" control={<Radio />} label="На время" />
                 </RadioGroup>               

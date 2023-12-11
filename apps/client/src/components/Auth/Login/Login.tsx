@@ -12,7 +12,7 @@ import { Messages } from '../../../utils/messages';
 const formSchema = z
   .object({
     email: z.string().email(Messages.EMAIL_INVALID_ERROR),
-    password: z.string().min(6, Messages.PASSWORD_MIN_LENGTH_ERROR),
+    password: z.string().min(7, Messages.PASSWORD_MIN_LENGTH_ERROR).max(20, Messages.PASSWORD_MAX_LENGTH_ERROR),
   });
 
   type FormSchema = z.infer<typeof formSchema>;

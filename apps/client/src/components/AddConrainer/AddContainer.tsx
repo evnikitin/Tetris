@@ -35,7 +35,7 @@ export function AddContainer() {
       justifyContent="center"
       minHeight='90vh'
     >      
-      <Paper elevation={3} sx={{width : '800px', display:"flex", flexDirection:"column", alignItems:"center",justifyContent:"center", padding: "40px 0"}}>
+      <Paper elevation={3} sx={{width : '800px', display:"flex", flexDirection:"column", alignItems:"center",justifyContent:"center", padding: "40px"}}>
       <Typography variant='h3' mb={4}>Добавить стакан</Typography>
       <Grid container mb={2} direction="column" spacing={3}  sx={{width : '100%'}}>
         <Grid item container justifyContent="space-between" alignItems="center" sx={{padding: '0 20px'}}>
@@ -57,7 +57,7 @@ export function AddContainer() {
           />          
         </Grid> 
     </Grid>              
-      <Button variant="contained" onClick={handleOutput}>
+      <Button sx={{height: '50px', width: '200px', margin: '0 auto'}} variant="contained" onClick={handleOutput}>
         Добавить стакан
       </Button>
     </Paper>

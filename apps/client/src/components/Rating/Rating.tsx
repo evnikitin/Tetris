@@ -32,7 +32,7 @@ export function Rating() {
       justifyContent="center"
     >
       <Typography variant="h3" gutterBottom>Рейтинг</Typography>
-      <TableContainer component={Paper} style={{maxWidth: '800px', width: '100%'}}>
+      <TableContainer elevation={3} component={Paper } style={{maxWidth: '800px', width: '100%'}}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>

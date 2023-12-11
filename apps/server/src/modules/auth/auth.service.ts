@@ -64,6 +64,26 @@ export class AuthService {
     return this.jwtService.generateTokens(user);
   }
 
+  async signInAsAdmin(signInUserDto: LoginUserDto): Promise<ITokens> {
+    const user = await this.userService.findUserByIdOrEmail(
+      signInUserDto.email,
+    );
+    if (!user) {
+      throw new BadRequestException('Wrong login or password, try again.');
+    }
+
+    const isPasswordCorrect = await this.passwordService.compare(
+      signInUserDto.password,
+      user.password,
+      user.salt,
+    );
+    if (!isPasswordCorrect) {
+      throw new BadRequestException('Wrong login or password, try again.');
+    }
+
+    return this.jwtService.generateTokens(user);
+  }
+
   async refreshTokens(refreshToken: string | undefined): Promise<ITokens> {
     if (!refreshToken) {
       throw new InternalServerErrorException();
