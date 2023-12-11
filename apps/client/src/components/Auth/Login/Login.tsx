@@ -34,10 +34,9 @@ export function Login() {
       const accessToken = (await login(data).unwrap()).accessToken;
       console.log(accessToken);
       let token_string = accessToken.toString();
-
       token_string = token_string.slice(0, token_string.lastIndexOf(".")).slice(token_string.indexOf(".") + 1, token_string.length);
       console.log(token_string);
-      const res = atob(token_string);
+      const res = atob(token_string); 
       console.log(res);
 
       navigate('/');    
