@@ -22,7 +22,7 @@ export interface User{
  
  const baseQuery = fetchBaseQuery({
    baseUrl: 'http://localhost:4000/api',
-   credentials: 'include',
+   // credentials: 'include',
    prepareHeaders: (headers, { getState }) => {
      const { token } = (getState() as RootState).auth;
      if (token) {

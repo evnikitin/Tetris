@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver} from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
+import { useLoginMutation } from '../../../store/slices/ApiSlices';
 import {
   Section, Container, Card,
 } from '../FormStyled';
@@ -20,6 +21,7 @@ const formSchema = z
 export function Login() {
   const navigate = useNavigate();
   const [errorMessage] = useState('');
+  const [login] = useLoginMutation();
 
   const {
     register,
@@ -29,7 +31,15 @@ export function Login() {
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
 
   const onSubmit: SubmitHandler<FormSchema> = async (data) => {
-      console.log(data);
+      const accessToken = (await login(data).unwrap()).accessToken;
+      console.log(accessToken);
+      let token_string = accessToken.toString();
+
+      token_string = token_string.slice(0, token_string.lastIndexOf(".")).slice(token_string.indexOf(".") + 1, token_string.length);
+      console.log(token_string);
+      const res = atob(token_string);
+      console.log(res);
+
       navigate('/');    
   };
 
