@@ -1,11 +1,18 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, OneToMany } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { ILevel } from '../interfaces/level.interface';
 import { Board } from '../../board/entities/board.entity';
-import { Figure } from "../../figure/entities/figure.entity";
+import { Figure } from '../../figure/entities/figure.entity';
 
 @Entity()
 export class Level implements ILevel {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ unique: true, nullable: false })

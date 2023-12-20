@@ -6,7 +6,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateFigureDto {
   @ApiProperty({
@@ -24,7 +24,7 @@ export class CreateFigureDto {
   @ApiProperty({
     description: 'Level name',
     type: Number,
-    example: 10,
+    example: 'EASY',
     required: true,
   })
   @IsString()

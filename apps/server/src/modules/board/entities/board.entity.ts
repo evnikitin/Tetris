@@ -4,7 +4,7 @@ import { Level } from '../../level/entities/level.entity';
 
 @Entity()
 export class Board implements IBoard {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()

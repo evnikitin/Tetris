@@ -10,7 +10,7 @@ import { Level } from '../../level/entities/level.entity';
 
 @Entity()
 export class Figure implements IFigure {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'smallint' })

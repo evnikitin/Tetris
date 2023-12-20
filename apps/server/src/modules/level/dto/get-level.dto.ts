@@ -1,14 +1,19 @@
-import {
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsPositive,
-  IsString,
-} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Level } from "../entities/level.entity";
+import { Board } from "../../board/entities/board.entity";
+import { Figure } from "../../figure/entities/figure.entity";
 
 export class GetLevelDto {
+  constructor({ id, figures, points, tick, time, name, board }: Level) {
+    this.id = id;
+    this.points = points;
+    this.tick = tick;
+    this.time = time;
+    this.name = name;
+    this.board = board;
+    this.points = points;
+    this.figures = figures;
+  }
   @ApiProperty({
     description: 'Level id',
     type: String,
@@ -53,7 +58,7 @@ export class GetLevelDto {
     description: 'Board height',
     type: Number,
     example: 12,
-    required: false,
+    required: true,
   })
   height: number | undefined;
 
@@ -61,7 +66,7 @@ export class GetLevelDto {
     description: 'Board width',
     type: Number,
     example: 8,
-    required: false,
+    required: true,
   })
   width: number | undefined;
 
@@ -69,15 +74,23 @@ export class GetLevelDto {
     description: 'Existing board id',
     type: Number,
     example: '9cd46425-b3bf-4188-bd86-c511a9af9012',
-    required: false,
+    required: true,
   })
-  boardId: string | undefined;
+  board: Board;
+
+  @ApiProperty({
+    description: 'Existing board id',
+    type: Number,
+    example: '9cd46425-b3bf-4188-bd86-c511a9af9012',
+    required: true,
+  })
+  figures: Figure[];
 
   @ApiProperty({
     description: 'Time record',
     type: Number,
     example: 45,
-    required: false,
+    required: true,
   })
   timeRecord: number | undefined;
 
@@ -85,7 +98,7 @@ export class GetLevelDto {
     description: 'Points record',
     type: Number,
     example: 150,
-    required: false,
+    required: true,
   })
   pointsRecord: number | undefined;
 }
