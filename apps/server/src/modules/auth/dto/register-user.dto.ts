@@ -1,8 +1,18 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { AuthRegister } from '@tetris/contracts';
 
 export class RegisterUserDto implements AuthRegister.IRequest {
+  @ApiProperty({
+    description: "User's name",
+    type: String,
+    example: 'Mike',
+    required: true,
+  })
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
   @ApiProperty({
     description: "User's email",
     type: String,
