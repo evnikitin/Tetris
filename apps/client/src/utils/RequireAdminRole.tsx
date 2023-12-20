@@ -1,17 +1,15 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import React from 'react';
+import { selectCurrentUser } from '../store/slices/AuthSlice';
+import { useSelector } from 'react-redux';
 
-enum Roles{
-  admin= "ADMIN",
-  user= "USER"
-  
-}
 
 export function RequireAdminRole() {
-  const token :string = Roles.admin // будет полчение роли админа
+  const user = useSelector(selectCurrentUser);
+  const role = user?.role;
 
   return (
-    token === "ADMIN" 
+    role === "ADMIN" 
       ? <Outlet />
       : <Navigate to="/" />
   );

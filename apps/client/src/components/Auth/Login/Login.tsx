@@ -9,6 +9,8 @@ import {
   Section, Container, Card,
 } from '../FormStyled';
 import { Messages } from '../../../utils/messages';
+import { setCredentials } from '../../../store/slices/AuthSlice';
+import { useDispatch } from 'react-redux';
 
 const formSchema = z
   .object({
@@ -21,6 +23,7 @@ const formSchema = z
 export function Login() {
   const navigate = useNavigate();
   const [errorMessage] = useState('');
+  const dispatch = useDispatch();
   const [login] = useLoginMutation();
 
   const {
@@ -36,8 +39,9 @@ export function Login() {
       let token_string = accessToken.toString();
       token_string = token_string.slice(0, token_string.lastIndexOf(".")).slice(token_string.indexOf(".") + 1, token_string.length);
       console.log(token_string);
-      const res = atob(token_string); 
-      console.log(res);
+      const res = JSON.parse(atob(token_string)); 
+      console.log(res.role, token_string);
+      dispatch(setCredentials({ user: {name: "default", role: res.role}, accessToken: token_string}));
 
       navigate('/');    
   };

@@ -1,15 +1,25 @@
 import React from 'react';
 import {  Grid, Typography, Paper, Box } from '@mui/material';
 import { LinkStyled } from './MainStyled';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser, logOut } from '../../store/slices/AuthSlice';
+import { useDispatch } from 'react-redux';
+import { useLogoutMutation } from '../../store/slices/ApiSlices';
 
-enum Roles{
-  admin= "ADMIN",
-  user= "USER"
-  
-}
 
 export const Main = () => {
-  const role :string = Roles.admin // будет получение роли админа
+  const user = useSelector(selectCurrentUser);
+  const dispatch = useDispatch();
+  const [logout] = useLogoutMutation();
+
+  const clickButtonHandler = async () => {
+    await logout().unwrap();
+    dispatch(logOut());
+    console.log("Нажал")
+  };
+
+  console.log(user?.role)
+
   return (
     <Box
       display="flex"
@@ -21,9 +31,13 @@ export const Main = () => {
       <Paper elevation={3} sx={{width : '800px', display:"flex", flexDirection:"column", alignItems:"center",justifyContent:"center"}}>
         <Grid container spacing={2} height='100vh' justifyContent='center' alignItems='center' direction="column">
           <Typography variant='h2'>Тетрис</Typography>
-          <Grid item>
+          {user?.role === undefined  ? <Grid item>
             <LinkStyled to="/login">Войти в аккаунт</LinkStyled>
+          </Grid> : <Grid item>
+            <LinkStyled onClick={clickButtonHandler} to="/">Выйти из аккаунта</LinkStyled>
           </Grid>
+          }     
+          
           <Grid item>
             <LinkStyled to="/game">Играть</LinkStyled>
           </Grid>
@@ -33,7 +47,7 @@ export const Main = () => {
           <Grid item>
             <LinkStyled to="/rating">Рейтинг</LinkStyled>
           </Grid>
-          {role === "ADMIN" && 
+          {user?.role === "ADMIN" && 
           <>
             <Grid item>
               <LinkStyled to="/container">Добавить стакан</LinkStyled>

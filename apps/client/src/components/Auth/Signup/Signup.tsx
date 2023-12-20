@@ -9,6 +9,8 @@ import {
 } from '../FormStyled';
 import { useSignupMutation } from '../../../store/slices/ApiSlices';
 import { Messages } from '../../../utils/messages';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../../../store/slices/AuthSlice';
 
 const formSchema = z.object({
   name: z
@@ -34,6 +36,7 @@ type FormSchema = z.infer<typeof formSchema>;
 export function Signup() {
   const navigate = useNavigate();
   const [signup] = useSignupMutation();
+  const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = useState('');
 
   const {
@@ -45,8 +48,15 @@ export function Signup() {
 
   const onSubmit: SubmitHandler<FormSchema> = async (data) => {
     try {
-      await signup(data).unwrap();
-      navigate(-1); // Переход осуществляется на страницу login
+      const accessToken = (await signup(data).unwrap()).accessToken;
+      console.log(accessToken);
+      let token_string = accessToken.toString();
+      token_string = token_string.slice(0, token_string.lastIndexOf(".")).slice(token_string.indexOf(".") + 1, token_string.length);
+      console.log(token_string);
+      const res = JSON.parse(atob(token_string)); 
+      console.log(res);
+      dispatch(setCredentials({ user: {name: data.name, role: res.role}, accessToken: token_string}));
+      navigate('/');  
     } catch (err) {
       setErrorMessage((err as Error).message);
     }   

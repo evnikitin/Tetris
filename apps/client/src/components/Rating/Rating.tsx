@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useEffect} from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,6 +8,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { MenuItem, Select, Typography, Box } from '@mui/material';
 import { useState } from 'react';
+import { PointsResult, TimesResult } from '../../store/slices/ApiSlices';
+import { useGetPointsResultsMutation, useGetTimesResultsMutation } from '../../store/slices/ApiSlices';
 
 const rows = [
   { name: 'John', value: [100, 12]},
@@ -19,11 +21,35 @@ const rows = [
 ];
 
 
-
 export function Rating() {  
   const [category, setCategory] = useState('points');
-  if(category === 'points') rows.sort((a, b) => b.value[0] - a.value[0]);
-  else rows.sort((a, b) => b.value[1] - a.value[1]);
+  const [results, setResults] = useState<PointsResult[]>();
+
+  const [getPointsResults] = useGetPointsResultsMutation();
+  //let results: PointsResult[] & TimesResult[] ;
+
+  useEffect (() => {
+    const fetchPointsData = async () => {  
+      let data
+      if (category === 'points') {
+        data = await getPointsResults().unwrap();
+      }      
+      setResults(data);
+      return data;
+    }
+    const result = fetchPointsData().catch(console.error);
+    result
+    .then((value) => 
+      {
+        if (Array.isArray(value)) {
+          setResults(value)
+      }      
+    });   
+    
+  }, [category, getPointsResults]);
+
+/*   if(category === 'points') rows.sort((a, b) => b.value[0] - a.value[0]);
+  else rows.sort((a, b) => b.value[1] - a.value[1]); */
   return (
     <Box
       display="flex"
@@ -47,7 +73,7 @@ export function Rating() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
+            {results?.map((result, index) => (
               <TableRow
                 key={index}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -55,8 +81,8 @@ export function Rating() {
                 <TableCell component="th" scope="row">
                   {index+1}
                 </TableCell>
-                <TableCell align="right">{row.name}</TableCell>
-                <TableCell align="right">{category ==="points" ? row.value[0] : row.value[1]}</TableCell>
+                <TableCell align="right">{result.name}</TableCell>
+                <TableCell align="right">{result.pointsRecord}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -2,14 +2,27 @@
 import {
    createApi, fetchBaseQuery,
  } from '@reduxjs/toolkit/query/react';
-import { setCredentials, logOut, RootState } from './AuthSlice';
+import { setCredentials, logOut, RootState, AuthUser } from './AuthSlice';
+
 
 export interface User{
    name: string,
    email: string,
    password: string
 }
+
+export interface Result {
+   id: string,
+   name: string      
+}
+
+export interface PointsResult extends Result{
+  pointsRecord: number,
+}
  
+export interface TimesResult extends Result{
+  timesRecord: number,
+}
  export interface FetchData {
    accessToken: string,
  }
@@ -22,7 +35,7 @@ export interface User{
  
  const baseQuery = fetchBaseQuery({
    baseUrl: 'http://localhost:4000/api',
-   // credentials: 'include',
+   /* credentials: 'include', */
    prepareHeaders: (headers, { getState }) => {
      const { token } = (getState() as RootState).auth;
      if (token) {
@@ -38,7 +51,7 @@ export interface User{
    if (result?.error?.status === 400) {
      const refreshResult = await baseQuery('/auth/refresh-tokens', api, extraOptions);
      if (refreshResult?.data) {
-       const user = api.getState().auth.user as User;
+       const user = api.getState().auth.user as AuthUser;
        const { accessToken } = refreshResult.data as FetchData;
  
        api.dispatch(setCredentials({ user, accessToken }));
@@ -74,6 +87,18 @@ export interface User{
          method: 'POST',
        }),
      }),
+     getPointsResults: builder.mutation<PointsResult[], void>({
+      query: () => ({
+        url: '/user/points-records',
+        method: 'GET',
+      }),
+    }),
+    getTimesResults: builder.mutation<TimesResult[], void>({
+      query: () => ({
+        url: '/user/times-records',
+        method: 'GET',
+      }),
+    }),
    }),
  });
  
@@ -81,5 +106,7 @@ export interface User{
    useLoginMutation,
    useSignupMutation,
    useLogoutMutation,
+   useGetPointsResultsMutation,
+   useGetTimesResultsMutation
  } = apiSlice;
  
