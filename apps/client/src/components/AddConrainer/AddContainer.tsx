@@ -39,10 +39,10 @@ export function AddContainer() {
       <Typography variant='h3' mb={4}>Добавить стакан</Typography>
       <Grid container mb={2} direction="column" spacing={3}  sx={{width : '100%'}}>
         <Grid item container justifyContent="space-between" alignItems="center" sx={{padding: '0 20px'}}>
-          <Typography variant='h4'>Высота стакана (16-36 клеток)</Typography>
+          <Typography variant='h4'>Высота стакана (16-24 клеток)</Typography>
           <TextField
             type="number"
-            inputProps={{ min: 16, max: 36 }}
+            inputProps={{ min: 16, max: 24 }}
             value={height}
             onChange={handleHeightChange}
           />

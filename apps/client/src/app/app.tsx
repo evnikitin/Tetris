@@ -11,7 +11,7 @@ import { Game } from '../components/Game/Game';
 import { Rating } from '../components/Rating/Rating';
 import { Control } from '../components/Control/Control';
 import { AboutDevelopers } from '../components/AboutDevelopers/AboutDevelopers';
-import { AboutSystem } from '../components/RoutesComponents/AboutSystem';
+import { AboutSystem } from '../components/AboutSystem/AboutSystem';
 import { RequireAdminRole } from '../utils/RequireAdminRole';
 import { Signup } from '../components/Auth/Signup';
 import { useSettings } from '../hooks/useSettings';

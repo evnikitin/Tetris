@@ -124,7 +124,7 @@ export const AddFigure = () => {
                   <FormControlLabel value="3" control={<Radio />} label="Третий уровень" />
                </RadioGroup>
                <Button sx={{height: '50px'}} variant="contained" onClick={handleAddFigure}>
-                  Добавить стакан
+                  Добавить фигуру
                </Button>
             </Box>
             

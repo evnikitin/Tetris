@@ -46,7 +46,7 @@ export function Signup() {
   const onSubmit: SubmitHandler<FormSchema> = async (data) => {
     try {
       await signup(data).unwrap();
-      navigate(-1); // Переход осуществляется на страницу signin
+      navigate(-1); // Переход осуществляется на страницу login
     } catch (err) {
       setErrorMessage((err as Error).message);
     }   

@@ -19,7 +19,7 @@ export interface GameController{
    setPlayer: React.Dispatch<React.SetStateAction<Player>>
 }
 
-const times = [1000,800,500];
+const times = [1000,800,200];
 
 
 const GameController = ({

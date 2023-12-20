@@ -60,10 +60,8 @@ export const movePlayer = ({ delta, position, shape, board } : {delta : { row: n
  
    const preventMove = !isOnBoard || (isOnBoard && collided);
    const nextPosition = preventMove ? position : desiredNextPosition;
- 
    const isMovingDown = delta.row > 0;
    const isHit = isMovingDown && (collided || !isOnBoard);
- 
    return { collided: isHit, nextPosition };
  };
 
@@ -87,12 +85,11 @@ const attemptMovement = ({ board, action, player, setPlayer, setGameOver } : {bo
      shape: player.tetromino.shape,
      board
    });
- 
+
    const isGameOver = collided && player.position.row === 0;
    if (isGameOver) {
      setGameOver(isGameOver);
    }
-   console.log(isFastDropping)
  
    setPlayer({
      ...player,

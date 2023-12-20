@@ -35,7 +35,7 @@ export interface User{
  const baseQueryWithReauth = async (args : any, api : any, extraOptions: any) => {
    let result = await baseQuery(args, api, extraOptions);
  
-   if (result?.error?.status === 402) {
+   if (result?.error?.status === 400) {
      const refreshResult = await baseQuery('/auth/refresh-tokens', api, extraOptions);
      if (refreshResult?.data) {
        const user = api.getState().auth.user as User;

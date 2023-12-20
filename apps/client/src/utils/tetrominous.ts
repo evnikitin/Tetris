@@ -81,12 +81,15 @@ export const transferToBoard = ({
    rows,
    shape
  }:{color: string, isOccupied: boolean, position: {row: number, column: number} , rows: typeof Cell[][], shape: number[][]}) => {
+   const clone = JSON.parse(JSON.stringify(shape)).reverse() as typeof shape;
+   console.log(clone);
    shape.forEach((row, y) => {
      row.forEach((cell, x) => {
        if (cell) {
          const occupied = isOccupied;
          const _y = y + position.row;
          const _x = x + position.column;
+         if(rows[_y][_x].occupied !== true )
          rows[_y][_x] = { occupied, color };
        }
      });

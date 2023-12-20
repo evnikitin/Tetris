@@ -8,6 +8,6 @@ interface GameProps {
 
 export const Game = ( {settings} : GameProps) => {
   return (
-    <Play settings={settings} rows={16} columns={10} />
+    <Play settings={settings} rows={10} columns={8} />
   )
 }
