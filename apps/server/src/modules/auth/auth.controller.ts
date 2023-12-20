@@ -55,6 +55,25 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @Post('login-as-admin')
+  @ApiOperation({ summary: "Admin's login" })
+  @ApiResponse({
+    status: 200,
+    type: AuthResponseDto,
+    description: 'Admin has been successfully logged in',
+  })
+  async signInAsAdmin(
+    @Body() signInUserDto: LoginUserDto,
+    @Res({ passthrough: true }) response: Response
+  ): Promise<AuthResponseDto> {
+    const { access, refresh } = await this.authService.signInAsAdmin(
+      signInUserDto
+    );
+    response.cookie(REFRESH_TOKEN_KEY, refresh, { httpOnly: true });
+    return { accessToken: access };
+  }
+
+  @HttpCode(HttpStatus.OK)
   @Post('refresh-tokens')
   @ApiOperation({ summary: "User's tokens refresh" })
   @ApiResponse({

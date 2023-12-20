@@ -11,9 +11,10 @@ import { setupSwagger } from './config/swagger.config';
 import cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import { AppContext } from './app-context';
+import { importLevelData } from './shared/seeds';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule);
   AppContext.setInstance(app);
 
   const globalPrefix = 'api';
@@ -34,11 +35,12 @@ async function bootstrap() {
   setupSwagger(app);
 
   const port: number = app.get(ConfigService).get('PORT', 4000);
-
+  app.enableCors({ credentials: true, origin: 'http://localhost:4200' });
   await app.listen(port);
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
+  importLevelData().then(() => console.log('Seeds is ran'));
 }
 
 bootstrap();

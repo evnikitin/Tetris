@@ -4,7 +4,7 @@ import { Role } from '../../../enums';
 
 @Entity()
 export class User implements IUser {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
