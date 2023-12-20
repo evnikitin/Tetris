@@ -43,7 +43,7 @@ export class JwtService {
 
   private signAccessToken(user: User): Promise<string> {
     return this.jwtService.signAsync(
-      { sub: user.id },
+      { sub: user.id, role: user.role },
       {
         secret: this.configService.get<string>('ACCESS_TOKEN_SECRET'),
         expiresIn: this.configService.get<string>('ACCESS_TOKEN_TTL'),
@@ -53,7 +53,7 @@ export class JwtService {
 
   private signRefreshToken(user: User): Promise<string> {
     return this.jwtService.signAsync(
-      { sub: user.id },
+      { sub: user.id, role: user.role },
       {
         secret: this.configService.get<string>('REFRESH_TOKEN_SECRET'),
         expiresIn: this.configService.get<string>('REFRESH_TOKEN_TTL'),
