@@ -18,13 +18,16 @@ export class BoardService {
   }
 
   async findAll() {
-    const boards = await this.boardRepository.find();
+    const boards = await this.boardRepository.find({ relations: ['levels'] });
 
     return boards.map((b) => new GetBoardDto(b));
   }
 
   async findOne(id: string) {
-    const board = await this.boardRepository.findOne({ where: { id } });
+    const board = await this.boardRepository.findOne({
+      where: { id },
+      relations: ['levels'],
+    });
 
     if (!board) {
       throw new NotFoundException(`There is no board with id ${id}`);
@@ -34,16 +37,18 @@ export class BoardService {
   }
 
   async update(id: string, updateBoardDto: UpdateBoardDto) {
-    const board = await this.findOne(id);
+    const boardToUpdate = await this.findOne(id);
 
-    const updatedBoard = { ...board, updateBoardDto };
+    const updatedBoard = await this.boardRepository.save({
+      ...boardToUpdate,
+      ...updateBoardDto,
+    });
 
-    return new GetBoardDto(await this.boardRepository.save(updatedBoard));
+    return new GetBoardDto(updatedBoard);
   }
 
   async remove(id: string) {
-    const board = await this.findOne(id);
-
-    return new GetBoardDto(await this.boardRepository.remove(board));
+    const boardToDelete = await this.findOne(id);
+    return new GetBoardDto(await this.boardRepository.remove(boardToDelete));
   }
 }

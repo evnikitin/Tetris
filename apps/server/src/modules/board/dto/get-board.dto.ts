@@ -8,7 +8,7 @@ export class GetBoardDto implements IBoard {
     this.id = id;
     this.height = height;
     this.width = width;
-    this.levels = levels;
+    this.levels = levels?.map((l) => ({ ...l, board: undefined }));
   }
 
   @ApiProperty({

@@ -29,12 +29,12 @@ export class FigureService {
 
     figure.level = level;
 
-    await this.figureRepository.save(figure);
+    const savedFigure = await this.figureRepository.save(figure);
 
     level.figures.push(figure);
     await this.levelRepository.save(level);
 
-    return new GetFigureDto(figure);
+    return new GetFigureDto(savedFigure);
   }
 
   async findAll(): Promise<GetFigureDto[]> {
@@ -44,7 +44,10 @@ export class FigureService {
   }
 
   async findOne(id: string): Promise<GetFigureDto> {
-    const figure = await this.figureRepository.findOne({ where: { id } });
+    const figure = await this.figureRepository.findOne({
+      where: { id },
+      relations: ['level'],
+    });
 
     if (!figure) {
       throw new NotFoundException(`There is no figure with id ${id}`);
@@ -55,13 +58,39 @@ export class FigureService {
 
   async update(
     id: string,
-    updateFigureDto: UpdateFigureDto
+    { shape, levelName }: UpdateFigureDto
   ): Promise<GetFigureDto> {
-    const figure = await this.findOne(id);
+    const figureToUpdate = await this.findOne(id);
 
-    const updatedFigure = { ...figure, updateFigureDto };
+    if (!levelName) {
+      const updatedFigure = await this.figureRepository.save({
+        ...figureToUpdate,
+        shape,
+      });
 
-    return new GetFigureDto(await this.figureRepository.save(updatedFigure));
+      return new GetFigureDto(updatedFigure);
+    }
+
+    const level = await this.levelRepository.findOne({
+      where: { name: levelName },
+      relations: ['figures'],
+    });
+
+    if (!level) {
+      throw new NotFoundException(`There is no level with name ${levelName}`);
+    }
+
+    figureToUpdate.level = level;
+
+    const savedFigure = await this.figureRepository.save({
+      ...figureToUpdate,
+      shape: shape ? shape : figureToUpdate.shape,
+    });
+
+    level.figures.push(figureToUpdate);
+    await this.levelRepository.save(level);
+
+    return new GetFigureDto(savedFigure);
   }
 
   async remove(id: string): Promise<GetFigureDto> {

@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Level } from './entities/level.entity';
 import { Repository } from 'typeorm';
 import { BoardService } from '../board/board.service';
+import { GetLevelDto } from './dto/get-level.dto';
 
 @Injectable()
 export class LevelService {
@@ -19,32 +20,34 @@ export class LevelService {
   ) {}
 
   async create({ boardId, height, width, ...createLevelDto }: CreateLevelDto) {
-    if (!boardId && !height && !width) {
-      throw new BadRequestException(
-        'You must provide either existing boardId, or height and width for new board.'
-      );
-    }
-
     let board = null;
     if (boardId) {
       board = await this.boardService.findOne(boardId);
+    } else if (height && width) {
+      board = await this.boardService.create({ width, height });
     } else {
-      board = this.boardService.create({ width, height });
+      throw new BadRequestException(
+        'You must provide either existing boardId, or height and width for new board.'
+      );
     }
 
     const level = this.levelRepository.create(createLevelDto);
     level.board = board;
     level.figures = [];
 
-    return await this.levelRepository.save(level);
+    return new GetLevelDto(await this.levelRepository.save(level));
   }
 
-  findAll() {
-    return this.levelRepository.find();
+  async findAll() {
+    const levels = await this.levelRepository.find({
+      relations: ['board', 'figures'],
+    });
+
+    return levels.map((l) => new GetLevelDto(l));
   }
 
-  findOne(id: string) {
-    const level = this.levelRepository.findOne({
+  async findOne(id: string) {
+    const level = await this.levelRepository.findOne({
       where: { id },
       relations: ['board', 'figures'],
     });
@@ -53,11 +56,11 @@ export class LevelService {
       throw new NotFoundException(`There is no level with id ${id}`);
     }
 
-    return level;
+    return new GetLevelDto(level);
   }
 
-  findOneByName(name: string) {
-    const level = this.levelRepository.findOne({
+  async findOneByName(name: string) {
+    const level = await this.levelRepository.findOne({
       where: { name },
       relations: ['board', 'figures'],
     });
@@ -66,20 +69,68 @@ export class LevelService {
       throw new NotFoundException(`There is no level with name ${name}`);
     }
 
-    return level;
+    return new GetLevelDto(level);
   }
 
-  async update(id: string, updateLevelDto: UpdateLevelDto) {
-    const level = await this.findOne(id);
-    // переписать
-    const updatedLevel = { ...level, updateLevelDto };
+  async update(
+    id: string,
+    { boardId, height, width, ...updateLevelDto }: UpdateLevelDto
+  ) {
+    const levelToUpdate = await this.findOne(id);
 
-    return await this.levelRepository.save(updatedLevel);
+    let board = null;
+    if (boardId) {
+      board = await this.boardService.findOne(boardId);
+    } else if (height && width) {
+      board = await this.boardService.create({ width, height });
+    } else {
+      throw new BadRequestException(
+        'You must provide either existing boardId, or height and width for new board.'
+      );
+    }
+
+    levelToUpdate.board = board;
+    const savedLevel = await this.levelRepository.save({
+      ...levelToUpdate,
+      ...updateLevelDto,
+    });
+    board.levels.push(savedLevel);
+    await this.boardService.update(board.id, board);
+
+    return new GetLevelDto(await this.levelRepository.save(savedLevel));
+  }
+
+  async updateByName(
+    name: string,
+    { boardId, height, width, ...updateLevelDto }: UpdateLevelDto
+  ) {
+    const levelToUpdate = await this.findOneByName(name);
+
+    let board = null;
+    if (boardId) {
+      board = await this.boardService.findOne(boardId);
+    } else if (height && width) {
+      board = await this.boardService.create({ width, height });
+    } else {
+      throw new BadRequestException(
+        'You must provide either existing boardId, or height and width for new board.'
+      );
+    }
+
+    levelToUpdate.board = board;
+    const savedLevel = await this.levelRepository.save({
+      ...levelToUpdate,
+      ...updateLevelDto,
+    });
+    board.levels.push(savedLevel);
+    await this.boardService.update(board.id, board);
+
+    return new GetLevelDto(await this.levelRepository.save(savedLevel));
   }
 
   async remove(id: string) {
     const level = await this.findOne(id);
 
-    return await this.levelRepository.remove(level);
+    return new GetLevelDto(await this.levelRepository.remove(level));
   }
 }

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Level } from "../entities/level.entity";
-import { Board } from "../../board/entities/board.entity";
-import { Figure } from "../../figure/entities/figure.entity";
+import { Level } from '../entities/level.entity';
+import { Board } from '../../board/entities/board.entity';
+import { Figure } from '../../figure/entities/figure.entity';
 
 export class GetLevelDto {
   constructor({ id, figures, points, tick, time, name, board }: Level) {
@@ -10,10 +10,11 @@ export class GetLevelDto {
     this.tick = tick;
     this.time = time;
     this.name = name;
-    this.board = board;
+    this.board = { ...board, levels: undefined };
     this.points = points;
-    this.figures = figures;
+    this.figures = figures?.map((f) => ({ ...f, level: undefined }));
   }
+
   @ApiProperty({
     description: 'Level id',
     type: String,
@@ -86,19 +87,19 @@ export class GetLevelDto {
   })
   figures: Figure[];
 
-  @ApiProperty({
-    description: 'Time record',
-    type: Number,
-    example: 45,
-    required: true,
-  })
-  timeRecord: number | undefined;
-
-  @ApiProperty({
-    description: 'Points record',
-    type: Number,
-    example: 150,
-    required: true,
-  })
-  pointsRecord: number | undefined;
+  // @ApiProperty({
+  //   description: 'Time record',
+  //   type: Number,
+  //   example: 45,
+  //   required: true,
+  // })
+  // timeRecord: number | undefined;
+  //
+  // @ApiProperty({
+  //   description: 'Points record',
+  //   type: Number,
+  //   example: 150,
+  //   required: true,
+  // })
+  // pointsRecord: number | undefined;
 }
