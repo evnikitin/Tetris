@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, FormControlLabel, Grid, Paper, Radio, RadioGroup, Typography } from '@mui/material';
+import { useGetFiguresMutation, useAddFiguresMutation } from '../../store/slices/ApiSlices';
 
 type CellType = 0 | 1;
 
@@ -31,17 +32,38 @@ const TetrisFigure = ({ figure, handleCellClick }: {
     </Grid>
   );
 };
+function numberToMatrix(num: number): number[][] {
+  const matrix: number[][] = Array.from({ length: 4 }, () => Array(4).fill(0));
+  const binaryString = num.toString(2).padStart(16, '0');
+  for (let i = 0; i < 16; i++) {
+    const row = Math.floor(i / 4);
+    const col = i % 4;
+    matrix[row][col] = parseInt(binaryString[i], 10);
+  }
+  return matrix;
+}
 
+function matrixToNumber(matrix: number[][]): number {
+  let binaryString = '';
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 4; col++) {
+      binaryString += matrix[row][col];
+    }
+  }
+  return parseInt(binaryString, 2);
+}
 
 
 export const AddFigure = () => {
+  const [getFigures] = useGetFiguresMutation();
+  const [addFigures] = useAddFiguresMutation();
   const [figure, setFigure] = useState<FigureType>([
     [0, 0, 0, 0],
     [0, 0, 0, 0],
     [0, 0, 0, 0],
     [0, 0, 0, 0],
   ]);
-  const [selectedValue, setSelectedValue] = useState<string>('1');
+  const [selectedValue, setSelectedValue] = useState<string>('EASY');
   const [error, setError] = useState<string>('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,13 +75,23 @@ export const AddFigure = () => {
     const updatedFigure = [...figure];
     updatedFigure[row][col] = updatedFigure[row][col] === 1 ? 0 : 1;
     setFigure(updatedFigure);
+
   };
 
-  const handleAddFigure = () => {
-   const isIntact = isFigureIntact();
-   isIntact ? setError('Фигура целостная') : setError('Фигура нецелостная');//тестовая, потом поменять на 
-   //вытянуть из бд все фигуры и проверка на уникальность 
-   //добавление в бд selectedValue, figure
+  const handleAddFigure = async() => {
+    try{
+      const isIntact = isFigureIntact();
+      if (isIntact){
+       const shape =   matrixToNumber(figure);
+       const res = await addFigures({levelName: selectedValue, shape})
+       console.log(res);
+       const result = await getFigures().unwrap();
+       console.log(result);
+      }
+      else setError('Фигура нецелостная')
+    } catch (err) {
+      setError((err as Error).message);
+    }
    
   };
 
@@ -119,9 +151,9 @@ export const AddFigure = () => {
             <Typography>Выберите уровень, на котором эта фигура появляется</Typography>
             <Box display='flex' justifyContent='space-between' alignItems='flex-end'>               
                <RadioGroup value={selectedValue} onChange={handleChange}>
-                  <FormControlLabel value="1" control={<Radio />} label="Первый уровень" />
-                  <FormControlLabel value="2" control={<Radio />} label="Второй уровень" />
-                  <FormControlLabel value="3" control={<Radio />} label="Третий уровень" />
+                  <FormControlLabel value="EASY" control={<Radio />} label="Первый уровень" />
+                  <FormControlLabel value="NORMAL" control={<Radio />} label="Второй уровень" />
+                  <FormControlLabel value="HARD" control={<Radio />} label="Третий уровень" />
                </RadioGroup>
                <Button sx={{height: '50px'}} variant="contained" onClick={handleAddFigure}>
                   Добавить фигуру

@@ -16,12 +16,28 @@ export interface Result {
    name: string      
 }
 
+export interface AddFigure{
+  shape: number,
+  levelName: string
+}
+
+export interface Board{
+  height: number,
+  width: number
+}
+
+export interface GetBoard extends Board{
+  id: string,
+  levels: string[]
+}
+
+
 export interface PointsResult extends Result{
   pointsRecord: number,
 }
  
 export interface TimesResult extends Result{
-  timesRecord: number,
+  timeRecord: number,
 }
  export interface FetchData {
    accessToken: string,
@@ -35,7 +51,7 @@ export interface TimesResult extends Result{
  
  const baseQuery = fetchBaseQuery({
    baseUrl: 'http://localhost:4000/api',
-   /* credentials: 'include', */
+   credentials: 'include',
    prepareHeaders: (headers, { getState }) => {
      const { token } = (getState() as RootState).auth;
      if (token) {
@@ -48,7 +64,7 @@ export interface TimesResult extends Result{
  const baseQueryWithReauth = async (args : any, api : any, extraOptions: any) => {
    let result = await baseQuery(args, api, extraOptions);
  
-   if (result?.error?.status === 400) {
+   if (result?.error?.status === 402) {
      const refreshResult = await baseQuery('/auth/refresh-tokens', api, extraOptions);
      if (refreshResult?.data) {
        const user = api.getState().auth.user as AuthUser;
@@ -95,8 +111,41 @@ export interface TimesResult extends Result{
     }),
     getTimesResults: builder.mutation<TimesResult[], void>({
       query: () => ({
-        url: '/user/times-records',
+        url: '/user/time-records',
         method: 'GET',
+      }),
+    }),
+    setBoard: builder.mutation<GetBoard, Board>({
+      query: (credentials) => ({
+        url: '/board',
+        method: 'POST',
+        body: { ...credentials },
+      }),
+    }),
+    addFigures: builder.mutation<any, AddFigure>({
+      query: (credentials) => ({
+        url: '/figure',
+        method: 'POST',
+        body: { ...credentials },
+      }),
+    }),
+    getFigures: builder.mutation<any, void>({
+      query: () => ({
+        url: '/figure',
+        method: 'GET',
+      }),
+    }),
+    getBoards: builder.mutation<Board[], void>({
+      query: () => ({
+        url: '/board',
+        method: 'GET',
+      }),
+    }),
+    updateLevel: builder.mutation<any, AddFigure>({
+      query: (credentials) => ({
+        url: '/figure',
+        method: 'PATCH',
+        body: { ...credentials },
       }),
     }),
    }),
@@ -107,6 +156,11 @@ export interface TimesResult extends Result{
    useSignupMutation,
    useLogoutMutation,
    useGetPointsResultsMutation,
-   useGetTimesResultsMutation
+   useGetTimesResultsMutation,
+   useSetBoardMutation,
+   useGetFiguresMutation,
+   useAddFiguresMutation,
+   useGetBoardsMutation,
+   useUpdateLevelMutation   
  } = apiSlice;
  

@@ -1,16 +1,33 @@
 import { Box, Paper, Typography, RadioGroup, FormControlLabel, Radio, Button , Grid, TextField, Switch, Select, MenuItem, SelectChangeEvent} from '@mui/material'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { useGetBoardsMutation } from '../../store/slices/ApiSlices';
+
+export interface Option{
+  value: string,
+  label: string
+}
 
 export const LevelSettings = () => {
-  const options = [
-    { value: '8 x 16', label: '8 x 16' },
-    { value: '10 x 20', label: '10 x 20' },
-    { value: '9 x 30', label: '9 x 30' },
-  ];
+  const [getBoards] = useGetBoardsMutation();
+
+  useEffect( ()=>{
+    const fetchBoards = async () => {  
+      
+      const result = await getBoards().unwrap()
+      const optionBoards: Option[] = [];
+      result.forEach((board) => optionBoards.push({value: `${board.height} x ${board.width}`, label:`${board.height} x ${board.width}`}));
+      setBoards(optionBoards); 
+      setSizeContainer(optionBoards[0].label) 
+    }
+   
+    fetchBoards().catch(console.error);
+
+  }, [getBoards])  
 
   const [level, setLevel] = useState<string>('1');
-  const [sizeContainer, setSizeContainer] = useState<string>(options[0].value);
+  const [boards, setBoards] = useState<Option[]>();
+  const [sizeContainer, setSizeContainer] = useState<string>("Пусто");  
   const [tick, setTick] = useState<number>(0);
   const [time, setTime] = useState<number>(0);
   const [points, setPoints] = useState<number>(0);
@@ -37,7 +54,7 @@ export const LevelSettings = () => {
   };
 
   const handleSaveSettings = () => {
-    if( tick <= 1000 && tick >= 200) {
+    if( tick <= 1000 && tick >= 500) {
       setTickError("");
       console.log({
         level,
@@ -89,7 +106,7 @@ export const LevelSettings = () => {
                   </Grid> 
                   <Grid item xs={2}>
                   <Select value={sizeContainer} onChange={handleChangeSizeContainer}>
-                    {options.map((option) => (
+                    {boards?.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
                       </MenuItem>

@@ -2,10 +2,12 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, Grid, Paper, Typography } from '@mui/material';
+import { useSetBoardMutation } from '../../store/slices/ApiSlices';
 
 export function AddContainer() {
   const [height, setHeight] = React.useState(16);
   const [width, setWidth] = React.useState(8);
+  const [setBoard] = useSetBoardMutation();
   const navigate = useNavigate();
 
   const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,8 +24,9 @@ export function AddContainer() {
     }
   };
 
-  const handleOutput = () => {
-    //добавление в бд.
+  const handleOutput = async () => {
+    console.log(typeof width, typeof height, {width, height})
+    await setBoard( {  height, width } ).unwrap();
     navigate(-1);
   };
 

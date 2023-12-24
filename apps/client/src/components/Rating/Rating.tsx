@@ -11,29 +11,24 @@ import { useState } from 'react';
 import { PointsResult, TimesResult } from '../../store/slices/ApiSlices';
 import { useGetPointsResultsMutation, useGetTimesResultsMutation } from '../../store/slices/ApiSlices';
 
-const rows = [
-  { name: 'John', value: [100, 12]},
-  { name: 'Jane', value: [5000, 520]}, 
-  { name: 'Ivan', value: [1010, 120]},
-  { name: 'Lev', value: [200, 30]}, 
-  { name: 'Evgeniy', value: [1000, 200]},
-  { name: 'Maks', value: [3000, 320]}, 
-];
-
+type ResultType = PointsResult[] | TimesResult[];
 
 export function Rating() {  
   const [category, setCategory] = useState('points');
-  const [results, setResults] = useState<PointsResult[]>();
+  const [results, setResults] = useState<ResultType>();
 
   const [getPointsResults] = useGetPointsResultsMutation();
-  //let results: PointsResult[] & TimesResult[] ;
+  const [getTimesResults] = useGetTimesResultsMutation();
 
   useEffect (() => {
     const fetchPointsData = async () => {  
       let data
       if (category === 'points') {
         data = await getPointsResults().unwrap();
-      }      
+      }else{
+        data = await getTimesResults().unwrap();
+      } 
+
       setResults(data);
       return data;
     }
@@ -46,7 +41,7 @@ export function Rating() {
       }      
     });   
     
-  }, [category, getPointsResults]);
+  }, [category, getPointsResults,getTimesResults]);
 
 /*   if(category === 'points') rows.sort((a, b) => b.value[0] - a.value[0]);
   else rows.sort((a, b) => b.value[1] - a.value[1]); */
@@ -82,7 +77,7 @@ export function Rating() {
                   {index+1}
                 </TableCell>
                 <TableCell align="right">{result.name}</TableCell>
-                <TableCell align="right">{result.pointsRecord}</TableCell>
+                { category === 'points' ? <TableCell align="right">{(result as PointsResult).pointsRecord }</TableCell> : <TableCell align="right">{(result as TimesResult).timeRecord } с</TableCell>}                
               </TableRow>
             ))}
           </TableBody>
