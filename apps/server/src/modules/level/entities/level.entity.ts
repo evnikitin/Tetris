@@ -31,6 +31,8 @@ export class Level implements ILevel {
   @JoinColumn({ name: 'boardId' })
   board: Board;
 
-  @OneToMany(() => Figure, (figure) => figure.level)
+  @OneToMany(() => Figure, (figure) => figure.level, {
+    cascade: ['insert', 'update', 'remove'],
+  })
   figures: Figure[];
 }

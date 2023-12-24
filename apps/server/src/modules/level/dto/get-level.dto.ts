@@ -10,9 +10,9 @@ export class GetLevelDto {
     this.tick = tick;
     this.time = time;
     this.name = name;
-    this.board = board;
+    this.board = { ...board, levels: undefined };
     this.points = points;
-    this.figures = figures;
+    this.figures = figures?.map((f) => ({ ...f, level: undefined }));
   }
 
   @ApiProperty({

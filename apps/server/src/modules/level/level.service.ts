@@ -35,11 +35,15 @@ export class LevelService {
     level.board = board;
     level.figures = [];
 
-    return await this.levelRepository.save(level);
+    return new GetLevelDto(await this.levelRepository.save(level));
   }
 
-  findAll() {
-    return this.levelRepository.find({ relations: ['board', 'figures'] });
+  async findAll() {
+    const levels = await this.levelRepository.find({
+      relations: ['board', 'figures'],
+    });
+
+    return levels.map((l) => new GetLevelDto(l));
   }
 
   async findOne(id: string) {
@@ -68,25 +72,65 @@ export class LevelService {
     return new GetLevelDto(level);
   }
 
-  async update(id: string, updateLevelDto: UpdateLevelDto) {
-    const level = await this.findOne(id);
-    // переписать
-    const updatedLevel = { ...level, updateLevelDto };
+  async update(
+    id: string,
+    { boardId, height, width, ...updateLevelDto }: UpdateLevelDto
+  ) {
+    const levelToUpdate = await this.findOne(id);
 
-    return await this.levelRepository.save(updatedLevel);
+    let board = null;
+    if (boardId) {
+      board = await this.boardService.findOne(boardId);
+    } else if (height && width) {
+      board = await this.boardService.create({ width, height });
+    } else {
+      throw new BadRequestException(
+        'You must provide either existing boardId, or height and width for new board.'
+      );
+    }
+
+    levelToUpdate.board = board;
+    const savedLevel = await this.levelRepository.save({
+      ...levelToUpdate,
+      ...updateLevelDto,
+    });
+    board.levels.push(savedLevel);
+    await this.boardService.update(board.id, board);
+
+    return new GetLevelDto(await this.levelRepository.save(savedLevel));
   }
 
-  async updateByName(name: string, updateLevelDto: UpdateLevelDto) {
-    const level = await this.findOneByName(name);
-    // переписать
-    const updatedLevel = { ...level, updateLevelDto };
+  async updateByName(
+    name: string,
+    { boardId, height, width, ...updateLevelDto }: UpdateLevelDto
+  ) {
+    const levelToUpdate = await this.findOneByName(name);
 
-    return await this.levelRepository.save(updatedLevel);
+    let board = null;
+    if (boardId) {
+      board = await this.boardService.findOne(boardId);
+    } else if (height && width) {
+      board = await this.boardService.create({ width, height });
+    } else {
+      throw new BadRequestException(
+        'You must provide either existing boardId, or height and width for new board.'
+      );
+    }
+
+    levelToUpdate.board = board;
+    const savedLevel = await this.levelRepository.save({
+      ...levelToUpdate,
+      ...updateLevelDto,
+    });
+    board.levels.push(savedLevel);
+    await this.boardService.update(board.id, board);
+
+    return new GetLevelDto(await this.levelRepository.save(savedLevel));
   }
 
   async remove(id: string) {
     const level = await this.findOne(id);
 
-    return await this.levelRepository.remove(level);
+    return new GetLevelDto(await this.levelRepository.remove(level));
   }
 }
