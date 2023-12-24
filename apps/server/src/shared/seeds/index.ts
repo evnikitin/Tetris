@@ -72,8 +72,8 @@ export async function importLevelData() {
   level2.tick = 700;
   level2.time = 180;
   level2.points = 1500;
-  level1.isNextFigureShown = true;
-  level1.isGridShown = false;
+  level2.isNextFigureShown = true;
+  level2.isGridShown = false;
 
   const board2 = new Board();
   board2.height = 20;
@@ -101,8 +101,8 @@ export async function importLevelData() {
   level3.tick = 500;
   level3.time = 180;
   level3.points = 1500;
-  level1.isNextFigureShown = false;
-  level1.isGridShown = false;
+  level3.isNextFigureShown = false;
+  level3.isGridShown = false;
 
   const board3 = new Board();
   board3.height = 22;

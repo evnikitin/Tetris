@@ -41,7 +41,7 @@ async function bootstrap() {
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
-  // importLevelData().then(() => console.log('Seeds is ran'));
+  importLevelData().then(() => console.log('Seeds is ran'));
 }
 
 bootstrap();

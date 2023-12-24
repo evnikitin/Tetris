@@ -101,8 +101,8 @@ export class CreateLevelDto {
 
   @ApiProperty({
     description: 'Defines if grid is shown',
-    type: Number,
-    example: 100,
+    type: Boolean,
+    example: true,
     required: false,
     default: true,
   })

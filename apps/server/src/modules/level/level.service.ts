@@ -83,13 +83,9 @@ export class LevelService {
       board = await this.boardService.findOne(boardId);
     } else if (height && width) {
       board = await this.boardService.create({ width, height });
-    } else {
-      throw new BadRequestException(
-        'You must provide either existing boardId, or height and width for new board.'
-      );
     }
 
-    levelToUpdate.board = board;
+    levelToUpdate.board = board ? board : levelToUpdate.board;
     const savedLevel = await this.levelRepository.save({
       ...levelToUpdate,
       ...updateLevelDto,
@@ -111,19 +107,17 @@ export class LevelService {
       board = await this.boardService.findOne(boardId);
     } else if (height && width) {
       board = await this.boardService.create({ width, height });
-    } else {
-      throw new BadRequestException(
-        'You must provide either existing boardId, or height and width for new board.'
-      );
     }
 
-    levelToUpdate.board = board;
+    levelToUpdate.board = board ? board : levelToUpdate.board;
     const savedLevel = await this.levelRepository.save({
       ...levelToUpdate,
       ...updateLevelDto,
     });
-    board.levels.push(savedLevel);
-    await this.boardService.update(board.id, board);
+    if (board) {
+      board.levels.push(savedLevel);
+      await this.boardService.update(board.id, board);
+    }
 
     return new GetLevelDto(await this.levelRepository.save(savedLevel));
   }
