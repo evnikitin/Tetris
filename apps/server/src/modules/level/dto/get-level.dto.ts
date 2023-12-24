@@ -2,9 +2,21 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Level } from '../entities/level.entity';
 import { Board } from '../../board/entities/board.entity';
 import { Figure } from '../../figure/entities/figure.entity';
+import { IsBoolean } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class GetLevelDto {
-  constructor({ id, figures, points, tick, time, name, board }: Level) {
+  constructor({
+    id,
+    figures,
+    points,
+    tick,
+    time,
+    name,
+    board,
+    isNextFigureShown,
+    isGridShown,
+  }: Level) {
     this.id = id;
     this.points = points;
     this.tick = tick;
@@ -12,6 +24,8 @@ export class GetLevelDto {
     this.name = name;
     this.board = { ...board, levels: undefined };
     this.points = points;
+    this.isGridShown = isGridShown;
+    this.isNextFigureShown = isNextFigureShown;
     this.figures = figures?.map((f) => ({ ...f, level: undefined }));
   }
 
@@ -87,19 +101,21 @@ export class GetLevelDto {
   })
   figures: Figure[];
 
-  // @ApiProperty({
-  //   description: 'Time record',
-  //   type: Number,
-  //   example: 45,
-  //   required: true,
-  // })
-  // timeRecord: number | undefined;
-  //
-  // @ApiProperty({
-  //   description: 'Points record',
-  //   type: Number,
-  //   example: 150,
-  //   required: true,
-  // })
-  // pointsRecord: number | undefined;
+  @ApiProperty({
+    description: 'Defines if next figure is shown',
+    type: Boolean,
+    example: true,
+    required: false,
+    default: true,
+  })
+  isNextFigureShown: boolean;
+
+  @ApiProperty({
+    description: 'Defines if grid is shown',
+    type: Number,
+    example: 100,
+    required: false,
+    default: true,
+  })
+  isGridShown: boolean;
 }

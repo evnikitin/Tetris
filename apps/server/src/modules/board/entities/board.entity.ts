@@ -13,8 +13,6 @@ export class Board implements IBoard {
   @Column()
   height: number;
 
-  @OneToMany(() => Level, (level) => level.board, {
-    cascade: ['insert', 'update', 'remove'],
-  })
+  @OneToMany(() => Level, (level) => level.board)
   levels: Level[];
 }
