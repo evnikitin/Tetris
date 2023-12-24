@@ -13,7 +13,7 @@ export class Figure implements IFigure {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'smallint' })
+  @Column({ type: 'integer' })
   shape: number;
 
   @ManyToOne(() => Level, (level) => level.figures, { onDelete: 'CASCADE' })

@@ -6,7 +6,7 @@ export class GetFigureDto {
   constructor({ id, shape, level }: Figure) {
     this.id = id;
     this.shape = shape;
-    this.level = level;
+    this.level = { ...level, figures: undefined };
   }
 
   @ApiProperty({
@@ -40,7 +40,6 @@ export class GetFigureDto {
         height: 18,
         levels: [],
       },
-      figures: [],
     },
     required: true,
   })

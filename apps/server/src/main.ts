@@ -11,6 +11,7 @@ import { setupSwagger } from './config/swagger.config';
 import cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import { AppContext } from './app-context';
+
 import { importLevelData } from './shared/seeds';
 
 async function bootstrap() {
@@ -40,7 +41,7 @@ async function bootstrap() {
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
-  importLevelData().then(() => console.log('Seeds is ran'));
+  // importLevelData().then(() => console.log('Seeds is ran'));
 }
 
 bootstrap();

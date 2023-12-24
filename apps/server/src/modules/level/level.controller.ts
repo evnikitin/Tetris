@@ -12,6 +12,7 @@ import { CreateLevelDto } from './dto/create-level.dto';
 import { UpdateLevelDto } from './dto/update-level.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Level } from './entities/level.entity';
+import { GetLevelDto } from './dto/get-level.dto';
 
 @ApiTags('level')
 @Controller('level')
@@ -22,7 +23,7 @@ export class LevelController {
   @ApiOperation({ summary: 'Create level' })
   @ApiResponse({
     status: 201,
-    type: Level,
+    type: GetLevelDto,
     description: 'Level has been successfully created',
   })
   create(@Body() createLevelDto: CreateLevelDto) {
@@ -33,7 +34,7 @@ export class LevelController {
   @ApiOperation({ summary: 'Get all levels' })
   @ApiResponse({
     status: 200,
-    type: [Level],
+    type: [GetLevelDto],
     description: 'Here are all levels',
   })
   findAll() {
@@ -44,7 +45,7 @@ export class LevelController {
   @ApiOperation({ summary: 'Get one level by id' })
   @ApiResponse({
     status: 200,
-    type: Level,
+    type: GetLevelDto,
     description: 'Here is one level',
   })
   findOne(@Param('id') id: string) {
@@ -55,7 +56,7 @@ export class LevelController {
   @ApiOperation({ summary: 'Get one level by name' })
   @ApiResponse({
     status: 200,
-    type: Level,
+    type: GetLevelDto,
     description: 'Here is one level',
   })
   findOneByName(@Param('name') name: string) {
@@ -66,18 +67,29 @@ export class LevelController {
   @ApiOperation({ summary: 'Update level' })
   @ApiResponse({
     status: 200,
-    type: Level,
+    type: GetLevelDto,
     description: 'Level has been successfully updated',
   })
   update(@Param('id') id: string, @Body() updateLevelDto: UpdateLevelDto) {
     return this.levelService.update(id, updateLevelDto);
   }
 
+  @Patch('by-name/:name')
+  @ApiOperation({ summary: 'Update level' })
+  @ApiResponse({
+    status: 200,
+    type: GetLevelDto,
+    description: 'Level has been successfully updated',
+  })
+  updateByName(@Param('name') name: string, @Body() updateLevelDto: UpdateLevelDto) {
+    return this.levelService.updateByName(name, updateLevelDto);
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Remove level' })
   @ApiResponse({
     status: 200,
-    type: Level,
+    type: GetLevelDto,
     description: 'Board has been successfully removed',
   })
   remove(@Param('id') id: string) {

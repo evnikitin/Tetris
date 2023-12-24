@@ -5,6 +5,7 @@ export const envValidationSchema = Joi.object({
   URL: Joi.string().required(),
   PORT: Joi.number().required(),
   ADMIN_LOGIN: Joi.string().required(),
+  ADMIN_SALT: Joi.string().required(),
   ADMIN_PASSWORD_HASH: Joi.string().required(),
   DESCRIPTION: Joi.string().required(),
   API_DOCS_PATH: Joi.string().required(),

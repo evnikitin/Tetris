@@ -12,7 +12,7 @@ export class CreateLevelDto {
   @ApiProperty({
     description: 'Level name',
     type: String,
-    example: 'первый',
+    example: 'NEW',
     required: true,
   })
   @IsString()
@@ -77,8 +77,8 @@ export class CreateLevelDto {
 
   @ApiProperty({
     description: 'Existing board id',
-    type: Number,
-    example: 10,
+    type: String,
+    example: '2ee5329f-5e4d-4379-81fa-178f956776bd',
     required: false,
   })
   @IsOptional()
@@ -86,25 +86,25 @@ export class CreateLevelDto {
   @IsNotEmpty()
   boardId: string | undefined;
 
-  @ApiProperty({
-    description: 'Time record',
-    type: Number,
-    example: 45,
-    required: false,
-  })
-  @IsOptional()
-  @IsNumber()
-  @IsPositive()
-  timeRecord: number | undefined;
-
-  @ApiProperty({
-    description: 'Points record',
-    type: Number,
-    example: 150,
-    required: false,
-  })
-  @IsOptional()
-  @IsNumber()
-  @IsPositive()
-  pointsRecord: number | undefined;
+  // @ApiProperty({
+  //   description: 'Time record',
+  //   type: Number,
+  //   example: 45,
+  //   required: false,
+  // })
+  // @IsOptional()
+  // @IsNumber()
+  // @IsPositive()
+  // timeRecord: number | undefined;
+  //
+  // @ApiProperty({
+  //   description: 'Points record',
+  //   type: Number,
+  //   example: 150,
+  //   required: false,
+  // })
+  // @IsOptional()
+  // @IsNumber()
+  // @IsPositive()
+  // pointsRecord: number | undefined;
 }

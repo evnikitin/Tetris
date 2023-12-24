@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Level } from './entities/level.entity';
 import { Repository } from 'typeorm';
 import { BoardService } from '../board/board.service';
+import { GetLevelDto } from './dto/get-level.dto';
 
 @Injectable()
 export class LevelService {
@@ -19,17 +20,15 @@ export class LevelService {
   ) {}
 
   async create({ boardId, height, width, ...createLevelDto }: CreateLevelDto) {
-    if (!boardId && !height && !width) {
-      throw new BadRequestException(
-        'You must provide either existing boardId, or height and width for new board.'
-      );
-    }
-
     let board = null;
     if (boardId) {
       board = await this.boardService.findOne(boardId);
+    } else if (height && width) {
+      board = await this.boardService.create({ width, height });
     } else {
-      board = this.boardService.create({ width, height });
+      throw new BadRequestException(
+        'You must provide either existing boardId, or height and width for new board.'
+      );
     }
 
     const level = this.levelRepository.create(createLevelDto);
@@ -40,11 +39,11 @@ export class LevelService {
   }
 
   findAll() {
-    return this.levelRepository.find();
+    return this.levelRepository.find({ relations: ['board', 'figures'] });
   }
 
-  findOne(id: string) {
-    const level = this.levelRepository.findOne({
+  async findOne(id: string) {
+    const level = await this.levelRepository.findOne({
       where: { id },
       relations: ['board', 'figures'],
     });
@@ -53,11 +52,11 @@ export class LevelService {
       throw new NotFoundException(`There is no level with id ${id}`);
     }
 
-    return level;
+    return new GetLevelDto(level);
   }
 
-  findOneByName(name: string) {
-    const level = this.levelRepository.findOne({
+  async findOneByName(name: string) {
+    const level = await this.levelRepository.findOne({
       where: { name },
       relations: ['board', 'figures'],
     });
@@ -66,11 +65,19 @@ export class LevelService {
       throw new NotFoundException(`There is no level with name ${name}`);
     }
 
-    return level;
+    return new GetLevelDto(level);
   }
 
   async update(id: string, updateLevelDto: UpdateLevelDto) {
     const level = await this.findOne(id);
+    // переписать
+    const updatedLevel = { ...level, updateLevelDto };
+
+    return await this.levelRepository.save(updatedLevel);
+  }
+
+  async updateByName(name: string, updateLevelDto: UpdateLevelDto) {
+    const level = await this.findOneByName(name);
     // переписать
     const updatedLevel = { ...level, updateLevelDto };
 

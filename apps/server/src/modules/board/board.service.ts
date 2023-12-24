@@ -18,13 +18,16 @@ export class BoardService {
   }
 
   async findAll() {
-    const boards = await this.boardRepository.find();
+    const boards = await this.boardRepository.find({ relations: ['levels'] });
 
     return boards.map((b) => new GetBoardDto(b));
   }
 
   async findOne(id: string) {
-    const board = await this.boardRepository.findOne({ where: { id } });
+    const board = await this.boardRepository.findOne({
+      where: { id },
+      relations: ['levels'],
+    });
 
     if (!board) {
       throw new NotFoundException(`There is no board with id ${id}`);
