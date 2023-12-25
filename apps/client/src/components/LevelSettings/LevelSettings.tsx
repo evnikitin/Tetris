@@ -1,7 +1,7 @@
 import { Box, Paper, Typography, RadioGroup, FormControlLabel, Radio, Button , Grid, TextField, Switch, Select, MenuItem, SelectChangeEvent} from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { useGetBoardsMutation } from '../../store/slices/ApiSlices';
+import { useGetBoardsMutation, useGetLevelQuery, useUpdateLevelMutation} from '../../store/slices/ApiSlices';
 
 export interface Option{
   value: string,
@@ -10,30 +10,44 @@ export interface Option{
 
 export const LevelSettings = () => {
   const [getBoards] = useGetBoardsMutation();
-
+  const [updateLevel] = useUpdateLevelMutation();
   useEffect( ()=>{
-    const fetchBoards = async () => {  
-      
+    const fetchBoards = async () => {        
       const result = await getBoards().unwrap()
       const optionBoards: Option[] = [];
-      result.forEach((board) => optionBoards.push({value: `${board.height} x ${board.width}`, label:`${board.height} x ${board.width}`}));
+      result.forEach((board) => optionBoards.push({value: board.id, label:`${board.height} x ${board.width}`}));
       setBoards(optionBoards); 
-      setSizeContainer(optionBoards[0].label) 
+      
     }
    
     fetchBoards().catch(console.error);
 
-  }, [getBoards])  
+  }, [getBoards])
+    
 
-  const [level, setLevel] = useState<string>('1');
+  const [level, setLevel] = useState<string>('EASY');
+  const { data } = useGetLevelQuery(`${level}`);
+  console.log(data);
   const [boards, setBoards] = useState<Option[]>();
-  const [sizeContainer, setSizeContainer] = useState<string>("Пусто");  
-  const [tick, setTick] = useState<number>(0);
-  const [time, setTime] = useState<number>(0);
-  const [points, setPoints] = useState<number>(0);
+  const [sizeContainer, setSizeContainer] = useState<string>(data?.board === undefined ? "" : data.board.id);  
+  const [tick, setTick] = useState<number>( 0 );
+  const [time, setTime] = useState<number>( 0 );
+  const [points, setPoints] = useState<number>( 0 );
   const [nextFigureVisibility, setNextFigureVisibility] = useState<boolean>(true);
   const [gridVisibility, setGridVisibility] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Проверяем, определены ли данные
+    if (data) {
+      setSizeContainer(data.board.id);
+      setTime(data.time ?? 0);
+      setPoints(data.points ?? 0); 
+      setTick(data.tick ?? 0);
+      setNextFigureVisibility(data.isNextFigureShown);
+      setGridVisibility(data.isGridShown);
+    }
+  }, [data]);
   
   const [TickError, setTickError] = useState<string>("");
     
@@ -53,20 +67,30 @@ export const LevelSettings = () => {
     setTime(Number(event.target.value));
   };
 
-  const handleSaveSettings = () => {
-    if( tick <= 1000 && tick >= 500) {
+  const handleSaveSettings = async() => {
+    if ( tick <= 1000 && tick >= 500) {
       setTickError("");
+      await updateLevel({
+        name: level,
+        id: sizeContainer,
+        points: points,
+        time: time,
+        tick: tick,
+        isGridShown: gridVisibility,
+        isNextFigureShown: nextFigureVisibility
+      })
+
       console.log({
         level,
         sizeContainer,
         tick,
-        time: time === 0 ? 100 : time , //100 значение из бд
-        points: points === 0 ? 100 : points , //100 значение из бд,
+        time: time, //100 значение из бд
+        points: points, //100 значение из бд,
         nextFigureVisibility
       })
       navigate(-1);  
     } else {
-      setTickError("Тик выходит за пределы диапазона 200-1000")
+      setTickError("Тик выходит за пределы диапазона 500-1000")
     } 
     console.log(tick)   
   };
@@ -93,9 +117,9 @@ export const LevelSettings = () => {
             <Typography>Выберите уровень, настройки которого хотите изменить</Typography>
             <Box display='flex' justifyContent='space-between' alignItems='flex-end'>               
                <RadioGroup value={level} onChange={(e)=>{setLevel(e.target.value);}}>
-                  <FormControlLabel value="1" control={<Radio />} label="Первый уровень" />
-                  <FormControlLabel value="2" control={<Radio />} label="Второй уровень" />
-                  <FormControlLabel value="3" control={<Radio />} label="Третий уровень" />
+                  <FormControlLabel value="EASY" control={<Radio />} label="Первый уровень" />
+                  <FormControlLabel value="MID" control={<Radio />} label="Второй уровень" />
+                  <FormControlLabel value="DIFFICULT" control={<Radio />} label="Третий уровень" />
                </RadioGroup>             
             </Box>  
             <Typography gutterBottom fontWeight='bold'>Игровой стакан</Typography>

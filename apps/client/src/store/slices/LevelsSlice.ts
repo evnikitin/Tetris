@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Board } from './ApiSlices';
+import { CreateBoard } from './ApiSlices';
 import { Figure } from '../../components/Game/Game';
 
 type LevelState = {
-  board: Board | null;
+  board: CreateBoard | null;
   points: number[];
   tickes: number[];
   times: number[];
@@ -25,7 +25,7 @@ const levelSlice = createSlice({
   initialState: initialState,
   reducers: {
     setLevels:
-    (state: LevelState, action: PayloadAction<{ board: Board , points: number[], tickes: number[], times: number[], figures: Figure[] }>) => {
+    (state: LevelState, action: PayloadAction<{ board: CreateBoard , points: number[], tickes: number[], times: number[], figures: Figure[] }>) => {
       state.board = action.payload.board;
       state.points = action.payload.points;
       state.tickes = action.payload.tickes;

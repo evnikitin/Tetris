@@ -21,7 +21,12 @@ export interface AddFigure{
   levelName: string
 }
 
-export interface Board{
+export interface Board extends CreateBoard{
+  id: string,
+  
+}
+
+export interface CreateBoard{
   height: number,
   width: number
 }
@@ -53,14 +58,26 @@ interface Figure{
 }
 
 export interface Level{
-  board: { height: number, width: number},
+  name: string,
+  board: Board,
   figures: Figure[],
   points: number,
   tick: number,
   time: number,
+  isNextFigureShown: boolean,
+  isGridShown: boolean
 }
 
-export  interface Error{
+export interface FetchLevel{
+  name: string,
+  id: string,
+  points: number,
+  tick: number,
+  time: number,
+  isNextFigureShown: boolean,
+  isGridShown: boolean
+}
+  export  interface Error{
   error: {
     data: string,
     status: 400,
@@ -134,7 +151,7 @@ export  interface Error{
         method: 'GET',
       }),
     }),
-    setBoard: builder.mutation<GetBoard, Board>({
+    setBoard: builder.mutation<GetBoard, CreateBoard>({
       query: (credentials) => ({
         url: '/board',
         method: 'POST',
@@ -160,19 +177,22 @@ export  interface Error{
         method: 'GET',
       }),
     }),
+    getLevel: builder.query<Level, string>({
+      query: (name) => `/level/by-name/${name}`,
+    }),
     getLevels: builder.mutation<Level[], void>({
       query: () => ({
         url: '/level',
         method: 'GET',
       }),
     }),
-    updateLevel: builder.mutation<any, AddFigure>({
+    updateLevel: builder.mutation<any, FetchLevel>({
       query: (credentials) => ({
-        url: '/figure',
+        url: `/level/by-name/${credentials.name}`,
         method: 'PATCH',
         body: { ...credentials },
       }),
-    }),
+    }),  
    }),
  });
  
@@ -185,8 +205,9 @@ export  interface Error{
    useSetBoardMutation,
    useGetFiguresMutation,
    useAddFiguresMutation,
-   useGetBoardsMutation,
+   useGetLevelQuery,
    useUpdateLevelMutation,
-   useGetLevelsMutation
+   useGetLevelsMutation,
+   useGetBoardsMutation
  } = apiSlice;
  

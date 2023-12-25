@@ -4,7 +4,7 @@ import { UserSettings } from '../../hooks/useSettings'
 import { useEffect } from 'react';
 import { useGetLevelsMutation } from '../../store/slices/ApiSlices';
 import { useDispatch } from 'react-redux';
-import { Board } from '../../store/slices/ApiSlices';
+import { CreateBoard } from '../../store/slices/ApiSlices';
 import { setLevels } from '../../store/slices/LevelsSlice';
 
 interface GameProps {
@@ -17,7 +17,7 @@ export interface Figure {
 }
 
 export interface AdminSettings{
-  board: Board;
+  board: CreateBoard;
   figures: Figure[],
   points: number[],
   times: number[],
