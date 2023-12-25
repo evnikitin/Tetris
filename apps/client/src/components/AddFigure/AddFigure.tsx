@@ -32,16 +32,6 @@ const TetrisFigure = ({ figure, handleCellClick }: {
     </Grid>
   );
 };
-function numberToMatrix(num: number): number[][] {
-  const matrix: number[][] = Array.from({ length: 4 }, () => Array(4).fill(0));
-  const binaryString = num.toString(2).padStart(16, '0');
-  for (let i = 0; i < 16; i++) {
-    const row = Math.floor(i / 4);
-    const col = i % 4;
-    matrix[row][col] = parseInt(binaryString[i], 10);
-  }
-  return matrix;
-}
 
 function matrixToNumber(matrix: number[][]): number {
   let binaryString = '';
@@ -81,7 +71,7 @@ export const AddFigure = () => {
   const handleAddFigure = async() => {
     try{
       const isIntact = isFigureIntact();
-      if (isIntact){
+      if (isIntact) {
        const shape =   matrixToNumber(figure);
        const res = await addFigures({levelName: selectedValue, shape})
        console.log(res);
@@ -152,8 +142,8 @@ export const AddFigure = () => {
             <Box display='flex' justifyContent='space-between' alignItems='flex-end'>               
                <RadioGroup value={selectedValue} onChange={handleChange}>
                   <FormControlLabel value="EASY" control={<Radio />} label="Первый уровень" />
-                  <FormControlLabel value="NORMAL" control={<Radio />} label="Второй уровень" />
-                  <FormControlLabel value="HARD" control={<Radio />} label="Третий уровень" />
+                  <FormControlLabel value="MID" control={<Radio />} label="Второй уровень" />
+                  <FormControlLabel value="DIFFICULT" control={<Radio />} label="Третий уровень" />
                </RadioGroup>
                <Button sx={{height: '50px'}} variant="contained" onClick={handleAddFigure}>
                   Добавить фигуру

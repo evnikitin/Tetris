@@ -10,6 +10,8 @@ import { playerController } from "../../../utils/PlayerController";
 import { useInterval } from "../../../hooks/useInterval";
 import { useDropTime } from "../../../hooks/useDropTime";
 import { useRef } from "react";
+import { selectCurrentTickes } from "../../../store/slices/LevelsSlice";
+import { useSelector } from 'react-redux';
 
 export interface GameController{
    board: Board,
@@ -19,9 +21,6 @@ export interface GameController{
    setPlayer: React.Dispatch<React.SetStateAction<Player>>
 }
 
-const times = [1000,800,200];
-
-
 const GameController = ({
   board,
   gameStats,
@@ -29,8 +28,10 @@ const GameController = ({
   setGameOver,
   setPlayer
 }: GameController) => {
+  const tickes = useSelector(selectCurrentTickes);
+  console.log("Время:", tickes);
   const [dropTime, pauseDropTime, resumeDropTime] = useDropTime({
-    gameStats, times
+    gameStats, times: tickes
   });
 
 

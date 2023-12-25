@@ -51,6 +51,9 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException('Wrong login or password, try again.');
     }
+    console.log("signInUserDto");
+    console.log(signInUserDto);
+
 
     const isPasswordCorrect = await this.passwordService.compare(
       signInUserDto.password,

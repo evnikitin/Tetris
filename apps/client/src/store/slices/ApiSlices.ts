@@ -39,13 +39,26 @@ export interface PointsResult extends Result{
 export interface TimesResult extends Result{
   timeRecord: number,
 }
- export interface FetchData {
-   accessToken: string,
- }
+export interface FetchData {
+  accessToken: string,
+}
  
- export interface LoginData {
-   email: string,
-   password: string
+export interface LoginData {
+  email: string,
+  password: string
+}
+
+interface Figure{
+  shape: number;
+}
+
+export interface Level{
+  board: { height: number, width: number},
+  figures: Figure[],
+  points: number,
+  tick: number,
+  time: number,
+
 }
 
  
@@ -141,6 +154,12 @@ export interface TimesResult extends Result{
         method: 'GET',
       }),
     }),
+    getLevels: builder.mutation<Level[], void>({
+      query: () => ({
+        url: '/level',
+        method: 'GET',
+      }),
+    }),
     updateLevel: builder.mutation<any, AddFigure>({
       query: (credentials) => ({
         url: '/figure',
@@ -161,6 +180,7 @@ export interface TimesResult extends Result{
    useGetFiguresMutation,
    useAddFiguresMutation,
    useGetBoardsMutation,
-   useUpdateLevelMutation   
+   useUpdateLevelMutation,
+   useGetLevelsMutation
  } = apiSlice;
  

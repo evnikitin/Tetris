@@ -9,17 +9,23 @@ import GameController from '../GameController/GameController';
 import GameStats from '../GameStats/GameStats';
 import Previews from '../Previews/Previews';
 import { UserSettings } from '../../../hooks/useSettings';
+import { selectCurrentPoints, selectCurrentTimes, selectCurrentBoard } from '../../../store/slices/LevelsSlice';
+import { useSelector } from 'react-redux';
+
 
 export interface myType {
   tetrominoes: (typeof Cell)[];
 }
 
-export const Tetris = ({ settings, rows, columns, setGameOver } : {settings: UserSettings, rows: number, columns: number, setGameOver: SetGameOverFn}) => {
-  const [gameStats, addLinesCleared, timeChange] = useGameStats(settings.level ,[10,100], [100,500], settings.variant);
+export const Tetris = ({ settings, setGameOver } : {settings: UserSettings, setGameOver: SetGameOverFn}) => {  
+  const boardValue = useSelector(selectCurrentBoard);
+  const points = useSelector(selectCurrentPoints);
+  const times = useSelector(selectCurrentTimes);
+  const [gameStats, addLinesCleared, timeChange] = useGameStats(settings.level , times, points, settings.variant);
   const [player, setPlayer, resetPlayer] = usePlayer();
   const [board] = useBoard({
-    rows,
-    columns,
+    rows: boardValue?.height !== undefined ? boardValue.height : 0,
+    columns: boardValue?.width !== undefined ? boardValue.width : 0,
     player,
     resetPlayer,
     addLinesCleared

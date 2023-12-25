@@ -27,19 +27,21 @@ export async function importLevelData() {
   const boardRepository = connection.getRepository(Board);
   const figureRepository = connection.getRepository(Figure);
 
+  const ADMIN_PASSWORD_HASH = configService.getOrThrow('ADMIN_PASSWORD_HASH');
+  console.log(ADMIN_PASSWORD_HASH);
   // TODO: пофиксить пароль, в БД должен сохраняться хэш пароля, а не сам пароль
   const admin = userRepository.create({
     role: Role.ADMIN,
     pointsRecord: 0,
     timeRecord: 0,
-    password: configService.getOrThrow('ADMIN_PASSWORD_HASH'),
+    password: ADMIN_PASSWORD_HASH,
     name: 'Admin',
     email: configService.getOrThrow('ADMIN_LOGIN'),
     salt: Buffer.from(configService.getOrThrow<string>('ADMIN_SALT'), 'base64'),
   });
   await userRepository.save(admin);
-
-  // first level
+ 
+  // first level 
   const level1 = new Level();
   level1.name = `EASY`;
   level1.tick = 1000;
