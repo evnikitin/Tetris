@@ -58,7 +58,13 @@ export interface Level{
   points: number,
   tick: number,
   time: number,
+}
 
+export  interface Error{
+  error: {
+    data: string,
+    status: 400,
+  }
 }
 
  

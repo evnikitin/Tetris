@@ -22,7 +22,7 @@ const formSchema = z
 
 export function Login() {
   const navigate = useNavigate();
-  const [errorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();
   const [login] = useLoginMutation();
 
@@ -34,6 +34,7 @@ export function Login() {
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
 
   const onSubmit: SubmitHandler<FormSchema> = async (data) => {
+    try {
       const accessToken = (await login(data).unwrap()).accessToken;
       console.log(accessToken);
       let token_string = accessToken.toString();
@@ -42,8 +43,11 @@ export function Login() {
       const res = JSON.parse(atob(token_string)); 
       console.log(res.role, token_string);
       dispatch(setCredentials({ user: {name: "default", role: res.role}, accessToken: token_string}));
-
       navigate('/');    
+    } catch (err) {
+      setErrorMessage("Неправильный логин или пароль");      
+    } 
+      
   };
 
   return (

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Button, FormControlLabel, Grid, Paper, Radio, RadioGroup, Typography } from '@mui/material';
 import { useGetFiguresMutation, useAddFiguresMutation } from '../../store/slices/ApiSlices';
+import { Error } from '../../store/slices/ApiSlices';
+import { useNavigate } from 'react-router-dom';
 
 type CellType = 0 | 1;
 
@@ -47,6 +49,7 @@ function matrixToNumber(matrix: number[][]): number {
 export const AddFigure = () => {
   const [getFigures] = useGetFiguresMutation();
   const [addFigures] = useAddFiguresMutation();
+  const navigate = useNavigate();
   const [figure, setFigure] = useState<FigureType>([
     [0, 0, 0, 0],
     [0, 0, 0, 0],
@@ -68,21 +71,29 @@ export const AddFigure = () => {
 
   };
 
-  const handleAddFigure = async() => {
-    try{
+  const handleAddFigure = async () => {
+    try {
       const isIntact = isFigureIntact();
       if (isIntact) {
-       const shape =   matrixToNumber(figure);
-       const res = await addFigures({levelName: selectedValue, shape})
-       console.log(res);
-       const result = await getFigures().unwrap();
-       console.log(result);
+        const shape = matrixToNumber(figure);
+        const res = await addFigures({ levelName: selectedValue, shape });
+        console.log(res);
+        console.log((res as Error).error.status)
+        if((res as Error).error.status === 400)setError('Такая фигура уже есть');
+        else  {
+          const result = await getFigures().unwrap();
+          console.log(result);
+
+        }
+        
       }
-      else setError('Фигура нецелостная')
+      else {
+        setError('Фигура нецелостная');
+      }
     } catch (err) {
-      setError((err as Error).message);
+      console.error(err);
+      navigate(-1);
     }
-   
   };
 
   const isFigureIntact = () => {

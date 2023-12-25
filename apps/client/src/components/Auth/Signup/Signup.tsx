@@ -58,7 +58,7 @@ export function Signup() {
       dispatch(setCredentials({ user: {name: data.name, role: res.role}, accessToken: token_string}));
       navigate('/');  
     } catch (err) {
-      setErrorMessage((err as Error).message);
+      setErrorMessage("Такой пользователь уже есть");      
     }   
   };
 

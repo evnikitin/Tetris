@@ -115,7 +115,7 @@ export class LevelService {
       ...updateLevelDto,
     });
     if (board) {
-      board.levels.push(savedLevel);
+      board.levels?.push(savedLevel);
       await this.boardService.update(board.id, board);
     }
 
