@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -7,6 +8,7 @@ import {
   IsString,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 export class CreateLevelDto {
   @ApiProperty({
@@ -86,25 +88,25 @@ export class CreateLevelDto {
   @IsNotEmpty()
   boardId: string | undefined;
 
-  // @ApiProperty({
-  //   description: 'Time record',
-  //   type: Number,
-  //   example: 45,
-  //   required: false,
-  // })
-  // @IsOptional()
-  // @IsNumber()
-  // @IsPositive()
-  // timeRecord: number | undefined;
-  //
-  // @ApiProperty({
-  //   description: 'Points record',
-  //   type: Number,
-  //   example: 150,
-  //   required: false,
-  // })
-  // @IsOptional()
-  // @IsNumber()
-  // @IsPositive()
-  // pointsRecord: number | undefined;
+  @ApiProperty({
+    description: 'Defines if next figure is shown',
+    type: Boolean,
+    example: true,
+    required: false,
+    default: true,
+  })
+  @IsBoolean()
+  @Transform((it) => it.value === 'true')
+  isNextFigureShown: boolean;
+
+  @ApiProperty({
+    description: 'Defines if grid is shown',
+    type: Boolean,
+    example: true,
+    required: false,
+    default: true,
+  })
+  @IsBoolean()
+  @Transform((it) => it.value === 'true')
+  isGridShown: boolean;
 }

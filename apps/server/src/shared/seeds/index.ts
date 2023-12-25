@@ -6,7 +6,6 @@ import { User } from '../../modules/user/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { AppContext } from '../../app-context';
 import { Role } from '../../enums';
-import { randomBytes } from 'node:crypto';
 
 export async function importLevelData() {
   const configService = AppContext.get<ConfigService>(ConfigService);
@@ -27,9 +26,6 @@ export async function importLevelData() {
   const boardRepository = connection.getRepository(Board);
   const figureRepository = connection.getRepository(Figure);
 
-  const ADMIN_PASSWORD_HASH = configService.getOrThrow('ADMIN_PASSWORD_HASH');
-  console.log(ADMIN_PASSWORD_HASH);
-  // TODO: пофиксить пароль, в БД должен сохраняться хэш пароля, а не сам пароль
   const admin = userRepository.create({
     role: Role.ADMIN,
     pointsRecord: 0,
@@ -47,6 +43,8 @@ export async function importLevelData() {
   level1.tick = 1000;
   level1.time = 180;
   level1.points = 1500;
+  level1.isNextFigureShown = true;
+  level1.isGridShown = true;
 
   const board = new Board();
   board.height = 16;
@@ -74,6 +72,8 @@ export async function importLevelData() {
   level2.tick = 700;
   level2.time = 180;
   level2.points = 1500;
+  level2.isNextFigureShown = true;
+  level2.isGridShown = false;
 
   const board2 = new Board();
   board2.height = 20;
@@ -101,6 +101,8 @@ export async function importLevelData() {
   level3.tick = 500;
   level3.time = 180;
   level3.points = 1500;
+  level3.isNextFigureShown = false;
+  level3.isGridShown = false;
 
   const board3 = new Board();
   board3.height = 22;

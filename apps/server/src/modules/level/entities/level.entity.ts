@@ -27,12 +27,16 @@ export class Level implements ILevel {
   @Column()
   points: number;
 
-  @ManyToOne(() => Board, (board) => board.levels)
+  @Column({ type: 'boolean', default: true })
+  isNextFigureShown: boolean;
+
+  @Column({ type: 'boolean', default: true })
+  isGridShown: boolean;
+
+  @ManyToOne(() => Board, (board) => board.levels, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'boardId' })
   board: Board;
 
-  @OneToMany(() => Figure, (figure) => figure.level, {
-    cascade: ['insert', 'update', 'remove'],
-  })
+  @OneToMany(() => Figure, (figure) => figure.level)
   figures: Figure[];
 }
