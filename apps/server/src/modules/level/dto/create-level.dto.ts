@@ -96,7 +96,6 @@ export class CreateLevelDto {
     default: true,
   })
   @IsBoolean()
-  @Transform((it) => it.value === 'true')
   isNextFigureShown: boolean;
 
   @ApiProperty({
@@ -107,6 +106,5 @@ export class CreateLevelDto {
     default: true,
   })
   @IsBoolean()
-  @Transform((it) => it.value === 'true')
   isGridShown: boolean;
 }

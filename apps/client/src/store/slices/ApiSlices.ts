@@ -21,7 +21,12 @@ export interface AddFigure{
   levelName: string
 }
 
-export interface Board{
+export interface Board extends CreateBoard{
+  id: string,
+  
+}
+
+export interface CreateBoard{
   height: number,
   width: number
 }
@@ -54,7 +59,7 @@ interface Figure{
 
 export interface Level{
   name: string,
-  board: { height: number, width: number},
+  board: Board,
   figures: Figure[],
   points: number,
   tick: number,
@@ -65,8 +70,7 @@ export interface Level{
 
 export interface FetchLevel{
   name: string,
-  height: number,
-  width: number
+  id: string,
   points: number,
   tick: number,
   time: number,
@@ -141,7 +145,7 @@ export interface FetchLevel{
         method: 'GET',
       }),
     }),
-    setBoard: builder.mutation<GetBoard, Board>({
+    setBoard: builder.mutation<GetBoard, CreateBoard>({
       query: (credentials) => ({
         url: '/board',
         method: 'POST',
@@ -161,14 +165,14 @@ export interface FetchLevel{
         method: 'GET',
       }),
     }),
-   /*  getBoards: builder.mutation<Board[], void>({
+    getBoards: builder.mutation<Board[], void>({
       query: () => ({
         url: '/board',
         method: 'GET',
       }),
-    }), */
-    getBoards: builder.query<Board[], void>({
-      query: () => '/board',
+    }),
+    getLevel: builder.query<Level, string>({
+      query: (name) => `/level/by-name/${name}`,
     }),
     getLevels: builder.mutation<Level[], void>({
       query: () => ({
@@ -182,13 +186,7 @@ export interface FetchLevel{
         method: 'PATCH',
         body: { ...credentials },
       }),
-    }),
-    getLevel: builder.mutation<Level, string>({
-      query: (name) => ({
-        url: `/level/by-name/${name}`,
-        method: 'GET',
-      }),
-    }),    
+    }),  
    }),
  });
  
@@ -201,9 +199,9 @@ export interface FetchLevel{
    useSetBoardMutation,
    useGetFiguresMutation,
    useAddFiguresMutation,
-   useGetBoardsQuery,
+   useGetLevelQuery,
    useUpdateLevelMutation,
    useGetLevelsMutation,
-   useGetLevelMutation
+   useGetBoardsMutation
  } = apiSlice;
  

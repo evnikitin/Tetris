@@ -1,7 +1,7 @@
 import { Box, Paper, Typography, RadioGroup, FormControlLabel, Radio, Button , Grid, TextField, Switch, Select, MenuItem, SelectChangeEvent} from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { useGetBoardsQuery, useGetLevelMutation, useUpdateLevelMutation} from '../../store/slices/ApiSlices';
+import { useGetBoardsMutation, useGetLevelQuery, useUpdateLevelMutation} from '../../store/slices/ApiSlices';
 
 export interface Option{
   value: string,
@@ -9,40 +9,27 @@ export interface Option{
 }
 
 export const LevelSettings = () => {
-  const { data } = useGetBoardsQuery();
-  const optionBoards: Option[] = [];
-  data?.forEach((board) => optionBoards.push({value: `${board.height} x ${board.width}`, label:`${board.height} x ${board.width}`}));
-  const res = optionBoards.reduce((acc: Option[], item) => {
-    if (acc.includes(item)) {
-      return acc; // если значение уже есть, то просто возвращаем аккумулятор
-    }
-    return [...acc, item]; // добавляем к аккумулятору и возвращаем новый аккумулятор
-  }, []);
- 
+  const [getBoards] = useGetBoardsMutation();
   const [updateLevel] = useUpdateLevelMutation();
-  const [getLevel] = useGetLevelMutation();
   useEffect( ()=>{
-    /* const fetchBoards = async () => {        
+    const fetchBoards = async () => {        
       const result = await getBoards().unwrap()
       const optionBoards: Option[] = [];
-      result.forEach((board) => optionBoards.push({value: `${board.height} x ${board.width}`, label:`${board.height} x ${board.width}`}));
-      const res = optionBoards.reduce((acc: Option[], item) => {
-        if (acc.includes(item)) {
-          return acc; // если значение уже есть, то просто возвращаем аккумулятор
-        }
-        return [...acc, item]; // добавляем к аккумулятору и возвращаем новый аккумулятор
-      }, []);
-      setBoards(res);       
+      result.forEach((board) => optionBoards.push({value: board.id, label:`${board.height} x ${board.width}`}));
+      setBoards(optionBoards); 
+      
     }
    
-    fetchBoards().catch(console.error); */
-    setBoards(res)
-  }, [])
+    fetchBoards().catch(console.error);
+
+  }, [getBoards])
     
 
   const [level, setLevel] = useState<string>('EASY');
+  const { data } = useGetLevelQuery(`${level}`);
+  console.log(data);
   const [boards, setBoards] = useState<Option[]>();
-  const [sizeContainer, setSizeContainer] = useState<string>("");  
+  const [sizeContainer, setSizeContainer] = useState<string>(data?.board === undefined ? "" : data.board.id);  
   const [tick, setTick] = useState<number>( 0 );
   const [time, setTime] = useState<number>( 0 );
   const [points, setPoints] = useState<number>( 0 );
@@ -51,21 +38,16 @@ export const LevelSettings = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchBoards = async () => {        
-      const data = await getLevel(level).unwrap();
-      if (data) {
-        //setSizeContainer(`${data.board.height} x ${data.board.width}`);
-        setTime(data.time ?? 0);
-        setPoints(data.points ?? 0); 
-        setTick(data.tick ?? 0);
-        setNextFigureVisibility(data.isNextFigureShown);
-        setGridVisibility(data.isGridShown);
-      }
-      
+    // Проверяем, определены ли данные
+    if (data) {
+      setSizeContainer(data.board.id);
+      setTime(data.time ?? 0);
+      setPoints(data.points ?? 0); 
+      setTick(data.tick ?? 0);
+      setNextFigureVisibility(data.isNextFigureShown);
+      setGridVisibility(data.isGridShown);
     }
-    fetchBoards();
-    
-  }, [level, getLevel]);
+  }, [data]);
   
   const [TickError, setTickError] = useState<string>("");
     
@@ -87,30 +69,24 @@ export const LevelSettings = () => {
 
   const handleSaveSettings = async() => {
     if ( tick <= 1000 && tick >= 500) {
-    const parts = sizeContainer.split(' x ');
-    const firstNumber = parseInt(parts[0], 10);
-    const secondNumber = parseInt(parts[1], 10);
       setTickError("");
-      /* await updateLevel({
+      await updateLevel({
         name: level,
-        height: firstNumber,
-        width: secondNumber,
+        id: sizeContainer,
         points: points,
         time: time,
         tick: tick,
         isGridShown: gridVisibility,
         isNextFigureShown: nextFigureVisibility
-      }) */
+      })
 
       console.log({
-        name: level,
-        height: firstNumber,
-        width: secondNumber,
-        points: points,
-        time: time,
-        tick: tick,
-        isGridShown: gridVisibility,
-        isNextFigureShown: nextFigureVisibility
+        level,
+        sizeContainer,
+        tick,
+        time: time, //100 значение из бд
+        points: points, //100 значение из бд,
+        nextFigureVisibility
       })
       navigate(-1);  
     } else {
@@ -120,7 +96,6 @@ export const LevelSettings = () => {
   };
 
   const handleChangeNextFigureVisibility = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log()
     setNextFigureVisibility(event.target.checked );
    };
   const handleChangeGridVisibility = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,12 +130,7 @@ export const LevelSettings = () => {
                   </Grid> 
                   <Grid item xs={2}>
                   <Select value={sizeContainer} onChange={handleChangeSizeContainer}>
-                    {boards?.reduce((acc: Option[], item) => {
-                          if (acc.includes(item)) {
-                            return acc; // если значение уже есть, то просто возвращаем аккумулятор
-                          }
-                          return [...acc, item]; // добавляем к аккумулятору и возвращаем новый аккумулятор
-                        }, [])?.map((option) => (
+                    {boards?.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
                       </MenuItem>
