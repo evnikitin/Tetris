@@ -30,7 +30,7 @@ export async function importLevelData() {
     role: Role.ADMIN,
     pointsRecord: 0,
     timeRecord: 0,
-    password: ADMIN_PASSWORD_HASH,
+    password: configService.getOrThrow('ADMIN_PASSWORD_HASH'),
     name: 'Admin',
     email: configService.getOrThrow('ADMIN_LOGIN'),
     salt: Buffer.from(configService.getOrThrow<string>('ADMIN_SALT'), 'base64'),

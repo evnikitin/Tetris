@@ -1,7 +1,7 @@
 import { Box, Paper, Typography, RadioGroup, FormControlLabel, Radio, Button , Grid, TextField, Switch, Select, MenuItem, SelectChangeEvent} from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { useGetBoardsMutation } from '../../store/slices/ApiSlices';
+import { useGetBoardsQuery, useGetLevelMutation, useUpdateLevelMutation} from '../../store/slices/ApiSlices';
 
 export interface Option{
   value: string,
@@ -9,31 +9,63 @@ export interface Option{
 }
 
 export const LevelSettings = () => {
-  const [getBoards] = useGetBoardsMutation();
-
+  const { data } = useGetBoardsQuery();
+  const optionBoards: Option[] = [];
+  data?.forEach((board) => optionBoards.push({value: `${board.height} x ${board.width}`, label:`${board.height} x ${board.width}`}));
+  const res = optionBoards.reduce((acc: Option[], item) => {
+    if (acc.includes(item)) {
+      return acc; // если значение уже есть, то просто возвращаем аккумулятор
+    }
+    return [...acc, item]; // добавляем к аккумулятору и возвращаем новый аккумулятор
+  }, []);
+ 
+  const [updateLevel] = useUpdateLevelMutation();
+  const [getLevel] = useGetLevelMutation();
   useEffect( ()=>{
-    const fetchBoards = async () => {  
-      
+    /* const fetchBoards = async () => {        
       const result = await getBoards().unwrap()
       const optionBoards: Option[] = [];
       result.forEach((board) => optionBoards.push({value: `${board.height} x ${board.width}`, label:`${board.height} x ${board.width}`}));
-      setBoards(optionBoards); 
-      setSizeContainer(optionBoards[0].label) 
+      const res = optionBoards.reduce((acc: Option[], item) => {
+        if (acc.includes(item)) {
+          return acc; // если значение уже есть, то просто возвращаем аккумулятор
+        }
+        return [...acc, item]; // добавляем к аккумулятору и возвращаем новый аккумулятор
+      }, []);
+      setBoards(res);       
     }
    
-    fetchBoards().catch(console.error);
+    fetchBoards().catch(console.error); */
+    setBoards(res)
+  }, [])
+    
 
-  }, [getBoards])  
-
-  const [level, setLevel] = useState<string>('1');
+  const [level, setLevel] = useState<string>('EASY');
   const [boards, setBoards] = useState<Option[]>();
-  const [sizeContainer, setSizeContainer] = useState<string>("Пусто");  
-  const [tick, setTick] = useState<number>(0);
-  const [time, setTime] = useState<number>(0);
-  const [points, setPoints] = useState<number>(0);
+  const [sizeContainer, setSizeContainer] = useState<string>("");  
+  const [tick, setTick] = useState<number>( 0 );
+  const [time, setTime] = useState<number>( 0 );
+  const [points, setPoints] = useState<number>( 0 );
   const [nextFigureVisibility, setNextFigureVisibility] = useState<boolean>(true);
   const [gridVisibility, setGridVisibility] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchBoards = async () => {        
+      const data = await getLevel(level).unwrap();
+      if (data) {
+        //setSizeContainer(`${data.board.height} x ${data.board.width}`);
+        setTime(data.time ?? 0);
+        setPoints(data.points ?? 0); 
+        setTick(data.tick ?? 0);
+        setNextFigureVisibility(data.isNextFigureShown);
+        setGridVisibility(data.isGridShown);
+      }
+      
+    }
+    fetchBoards();
+    
+  }, [level, getLevel]);
   
   const [TickError, setTickError] = useState<string>("");
     
@@ -53,25 +85,42 @@ export const LevelSettings = () => {
     setTime(Number(event.target.value));
   };
 
-  const handleSaveSettings = () => {
-    if( tick <= 1000 && tick >= 500) {
+  const handleSaveSettings = async() => {
+    if ( tick <= 1000 && tick >= 500) {
+    const parts = sizeContainer.split(' x ');
+    const firstNumber = parseInt(parts[0], 10);
+    const secondNumber = parseInt(parts[1], 10);
       setTickError("");
+      /* await updateLevel({
+        name: level,
+        height: firstNumber,
+        width: secondNumber,
+        points: points,
+        time: time,
+        tick: tick,
+        isGridShown: gridVisibility,
+        isNextFigureShown: nextFigureVisibility
+      }) */
+
       console.log({
-        level,
-        sizeContainer,
-        tick,
-        time: time === 0 ? 100 : time , //100 значение из бд
-        points: points === 0 ? 100 : points , //100 значение из бд,
-        nextFigureVisibility
+        name: level,
+        height: firstNumber,
+        width: secondNumber,
+        points: points,
+        time: time,
+        tick: tick,
+        isGridShown: gridVisibility,
+        isNextFigureShown: nextFigureVisibility
       })
       navigate(-1);  
     } else {
-      setTickError("Тик выходит за пределы диапазона 200-1000")
+      setTickError("Тик выходит за пределы диапазона 500-1000")
     } 
     console.log(tick)   
   };
 
   const handleChangeNextFigureVisibility = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log()
     setNextFigureVisibility(event.target.checked );
    };
   const handleChangeGridVisibility = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,9 +142,9 @@ export const LevelSettings = () => {
             <Typography>Выберите уровень, настройки которого хотите изменить</Typography>
             <Box display='flex' justifyContent='space-between' alignItems='flex-end'>               
                <RadioGroup value={level} onChange={(e)=>{setLevel(e.target.value);}}>
-                  <FormControlLabel value="1" control={<Radio />} label="Первый уровень" />
-                  <FormControlLabel value="2" control={<Radio />} label="Второй уровень" />
-                  <FormControlLabel value="3" control={<Radio />} label="Третий уровень" />
+                  <FormControlLabel value="EASY" control={<Radio />} label="Первый уровень" />
+                  <FormControlLabel value="MID" control={<Radio />} label="Второй уровень" />
+                  <FormControlLabel value="DIFFICULT" control={<Radio />} label="Третий уровень" />
                </RadioGroup>             
             </Box>  
             <Typography gutterBottom fontWeight='bold'>Игровой стакан</Typography>
@@ -106,7 +155,12 @@ export const LevelSettings = () => {
                   </Grid> 
                   <Grid item xs={2}>
                   <Select value={sizeContainer} onChange={handleChangeSizeContainer}>
-                    {boards?.map((option) => (
+                    {boards?.reduce((acc: Option[], item) => {
+                          if (acc.includes(item)) {
+                            return acc; // если значение уже есть, то просто возвращаем аккумулятор
+                          }
+                          return [...acc, item]; // добавляем к аккумулятору и возвращаем новый аккумулятор
+                        }, [])?.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
                       </MenuItem>

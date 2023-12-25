@@ -53,12 +53,25 @@ interface Figure{
 }
 
 export interface Level{
+  name: string,
   board: { height: number, width: number},
   figures: Figure[],
   points: number,
   tick: number,
   time: number,
+  isNextFigureShown: boolean,
+  isGridShown: boolean
+}
 
+export interface FetchLevel{
+  name: string,
+  height: number,
+  width: number
+  points: number,
+  tick: number,
+  time: number,
+  isNextFigureShown: boolean,
+  isGridShown: boolean
 }
 
  
@@ -148,11 +161,14 @@ export interface Level{
         method: 'GET',
       }),
     }),
-    getBoards: builder.mutation<Board[], void>({
+   /*  getBoards: builder.mutation<Board[], void>({
       query: () => ({
         url: '/board',
         method: 'GET',
       }),
+    }), */
+    getBoards: builder.query<Board[], void>({
+      query: () => '/board',
     }),
     getLevels: builder.mutation<Level[], void>({
       query: () => ({
@@ -160,13 +176,19 @@ export interface Level{
         method: 'GET',
       }),
     }),
-    updateLevel: builder.mutation<any, AddFigure>({
+    updateLevel: builder.mutation<any, FetchLevel>({
       query: (credentials) => ({
-        url: '/figure',
+        url: `/level/by-name/${credentials.name}`,
         method: 'PATCH',
         body: { ...credentials },
       }),
     }),
+    getLevel: builder.mutation<Level, string>({
+      query: (name) => ({
+        url: `/level/by-name/${name}`,
+        method: 'GET',
+      }),
+    }),    
    }),
  });
  
@@ -179,8 +201,9 @@ export interface Level{
    useSetBoardMutation,
    useGetFiguresMutation,
    useAddFiguresMutation,
-   useGetBoardsMutation,
+   useGetBoardsQuery,
    useUpdateLevelMutation,
-   useGetLevelsMutation
+   useGetLevelsMutation,
+   useGetLevelMutation
  } = apiSlice;
  
