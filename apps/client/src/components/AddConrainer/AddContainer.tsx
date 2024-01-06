@@ -50,9 +50,11 @@ export function AddContainer() {
             onChange={handleHeightChange}
           />
         </Grid>
-        <Grid item container justifyContent="space-between" alignItems="center" sx={{padding: '0 20px'}}>
+        <Grid item container justifyContent="space-between" alignItems="center" sx={{padding: '0 20px', fontSize: '40px'}}>
           <Typography variant='h4'>Ширина стакана (8-16 клеток)</Typography>
           <TextField
+            
+            sx={{fontSize: '60px'}}
             type="number"
             inputProps={{ min: 8, max: 16 }}
             value={width}

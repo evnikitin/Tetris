@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 
 import { randomTetromino } from "../utils/tetrominous";
+import { Figure } from "../components/Game/Game";
 
 export interface Tetromino {
    shape: number[][];
@@ -20,15 +21,15 @@ export interface Player {
    tetromino: Tetromino; 
  }
 
-const buildPlayer = (previous?: Player): Player=> {
+const buildPlayer = (figures: Figure[], previous?: Player): Player=> {
   let tetrominoes : Tetromino[];
   if (previous) {
     tetrominoes = [...previous.tetrominoes];
-    tetrominoes.unshift(randomTetromino());
+    tetrominoes.unshift(randomTetromino(figures));
   } else {
     tetrominoes = Array(3)
       .fill(0)
-      .map((_) => randomTetromino());
+      .map((_) => randomTetromino(figures));
   }
 
   return {
@@ -40,11 +41,20 @@ const buildPlayer = (previous?: Player): Player=> {
   };
 };
 
-export const usePlayer = () : [Player, React.Dispatch<React.SetStateAction<Player>>, () => void] => {
-  const [player, setPlayer] = useState(buildPlayer());
+export const usePlayer = (gameStats: {
+  variant: string,
+  level: number;
+  linesCompleted: number;
+  pointsPerLevel: number;
+  secondsToLevel: number;
+  score: number;
+  seconds: number;
+}, figures: Figure[][]) : [Player, React.Dispatch<React.SetStateAction<Player>>, (figuresfigures: Figure[]) => void] => {
+  const { level } = gameStats;
+  const [player, setPlayer] = useState(buildPlayer(figures[level-1]));
 
-  const resetPlayer = useCallback(() => {
-    setPlayer((prev) => buildPlayer(prev));
+  const resetPlayer = useCallback((figures: Figure[]) => {
+    setPlayer((prev) => buildPlayer(figures, prev));
   }, []);
 
   return [player, setPlayer, resetPlayer];

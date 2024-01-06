@@ -1,6 +1,7 @@
 import { Cell } from "../components/Game/Cell";
+import { Figure } from "../components/Game/Game";
 
-export const TETROMINOES = [
+/* export const TETROMINOES = [
    {
      shape: [
        [0, 1, 0, 0],
@@ -57,11 +58,11 @@ export const TETROMINOES = [
      ],
      color: `blue`
    }
-];
+]; */
 
-export const randomTetromino = () => {
-   const index = Math.floor(Math.random() * TETROMINOES.length);
-   return TETROMINOES[index];
+export const randomTetromino = (figure: Figure[]) => {
+   const index = Math.floor(Math.random() * figure.length);
+   return figure[index];
  };
 
 export const rotate = ({ piece, direction } : {piece: number[][], direction: number} ) => {

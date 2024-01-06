@@ -34,7 +34,7 @@ const findDropPosition = ({ board, position, shape } : {board: Board, position: 
   return { ...position, row };
 };
 
-export const nextBoard = ({ board, player, resetPlayer, addLinesCleared }: NextBoardProps) => {
+export const nextBoard = ({figures, board, player, resetPlayer, addLinesCleared }: NextBoardProps) => {
   const { tetromino, position } = player;
 
   let rows = board.rows.map((row) =>
@@ -85,7 +85,7 @@ export const nextBoard = ({ board, player, resetPlayer, addLinesCleared }: NextB
   }
    
   if (player.collided || player.isFastDropping) {
-    resetPlayer();
+    resetPlayer(figures);
   }
 
   return {

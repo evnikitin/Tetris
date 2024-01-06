@@ -9,7 +9,7 @@ import GameController from '../GameController/GameController';
 import GameStats from '../GameStats/GameStats';
 import Previews from '../Previews/Previews';
 import { UserSettings } from '../../../hooks/useSettings';
-import { selectCurrentPoints, selectCurrentTimes, selectCurrentBoard } from '../../../store/slices/LevelsSlice';
+import { selectCurrentPoints, selectCurrentTimes, selectCurrentBoard, selectCurrentFigures } from '../../../store/slices/LevelsSlice';
 import { useSelector } from 'react-redux';
 
 
@@ -17,16 +17,20 @@ export interface myType {
   tetrominoes: (typeof Cell)[];
 }
 
+
 export const Tetris = ({ settings, setGameOver } : {settings: UserSettings, setGameOver: SetGameOverFn}) => {  
   const boardValue = useSelector(selectCurrentBoard);
   const points = useSelector(selectCurrentPoints);
   const times = useSelector(selectCurrentTimes);
+  const figures = useSelector(selectCurrentFigures);
   const [gameStats, addLinesCleared, timeChange] = useGameStats(settings.level , times, points, settings.variant);
-  const [player, setPlayer, resetPlayer] = usePlayer();
+  const [player, setPlayer, resetPlayer] = usePlayer(gameStats, figures);
   const [board] = useBoard({
     rows: boardValue?.height !== undefined ? boardValue.height : 0,
     columns: boardValue?.width !== undefined ? boardValue.width : 0,
     player,
+    gameStats, 
+    figures,
     resetPlayer,
     addLinesCleared
   });
@@ -36,7 +40,7 @@ export const Tetris = ({ settings, setGameOver } : {settings: UserSettings, setG
   return (
     <Box display='flex' alignItems='end' gap={2}>
           <Box height='600px' display='flex' flexDirection='column' justifyContent='space-between'>
-            <Previews tetrominoes={player.tetrominoes} /> 
+            <Previews gameStats={gameStats} tetrominoes={player.tetrominoes} /> 
             <GameStats gameStats={gameStats} timeChange = {timeChange} />
           </Box>          
           <Box position='relative'>

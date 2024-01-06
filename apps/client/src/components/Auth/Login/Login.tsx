@@ -42,6 +42,8 @@ export function Login() {
       console.log(token_string);
       const res = JSON.parse(atob(token_string)); 
       console.log(res.role, token_string);
+      const jsonString = JSON.stringify({id:res.sub});
+      localStorage.setItem('id', jsonString);
       dispatch(setCredentials({ user: {name: "default", role: res.role}, accessToken: token_string}));
       navigate('/');    
     } catch (err) {

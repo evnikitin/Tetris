@@ -1,8 +1,9 @@
+/* eslint-disable prefer-const */
 import React from 'react'
 import { Play } from './Play/Play'
 import { UserSettings } from '../../hooks/useSettings'
 import { useEffect } from 'react';
-import { useGetLevelsMutation } from '../../store/slices/ApiSlices';
+import { Level, useGetLevelsMutation } from '../../store/slices/ApiSlices';
 import { useDispatch } from 'react-redux';
 import { CreateBoard } from '../../store/slices/ApiSlices';
 import { setLevels } from '../../store/slices/LevelsSlice';
@@ -18,10 +19,28 @@ export interface Figure {
 
 export interface AdminSettings{
   board: CreateBoard;
-  figures: Figure[],
+  figures: Figure[][],
   points: number[],
   times: number[],
-  tickes: number[]
+  tickes: number[],
+  grids: boolean[],
+  showFigures: boolean[]
+}
+
+function compareLevels(a: Level, b: Level) {
+  if (a.name === "EASY") {
+    return -1;
+  } else if (a.name === "MID") {
+    if (b.name === "EASY") {
+      return 1;
+    } else if (b.name === "DIFFICULT") {
+      return -1;
+    }
+  } else if (a.name === "DIFFICULT") {
+    return 1;
+  }
+  
+  return 0;
 }
 
 function numberToMatrix(num: number): number[][] {
@@ -41,22 +60,39 @@ export const Game = ( {settings} : GameProps) => {
 
   useEffect(()=>{
     const fetchLevels = async () => {  
+      const figures: Figure[][] = [];
       const levels: AdminSettings = {
         board: {width: 0, height: 0}, 
         points: [],
         tickes: [],
         times: [],
-        figures: []
+        figures: [],
+        grids: [],
+        showFigures: [],
       };
-      const result = await getLevels().unwrap();
-      levels.board = { height: result[settings.level-1].board.height, width: result[settings.level-1].board.width}
-      result.forEach(level => {
+      let result = await getLevels().unwrap();
+      
+      const colors = ["red", "blue", "green", "yellow", "orange", "purple", "pink"];
+      let index = 0;
+      const new_arr = JSON.parse(JSON.stringify(result)) as Level[];
+      new_arr.sort(compareLevels).forEach(level => {     
+        figures[index] = figures[index] || [];
+        level.figures.forEach((f,i)=>{
+          const colorIndex = i % colors.length; 
+          const color = colors[colorIndex];
+          figures[index].push({shape: numberToMatrix(f.shape), color: color})
+        })
         levels.points.push(level.points);
         levels.tickes.push(level.tick);
         levels.times.push(level.time);
+        levels.grids.push(level.isGridShown);
+        levels.showFigures.push(level.isNextFigureShown);
+        index++;
       })
-      //console.log(result);
-      //console.log(levels);
+      levels.board = { height: new_arr[settings.level-1].board.height, width: new_arr[settings.level-1].board.width}
+      levels.figures=figures;
+      console.log(result);
+      console.log(levels);
       dispatch(setLevels(levels));
     }   
     fetchLevels().catch(console.error);

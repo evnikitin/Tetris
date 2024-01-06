@@ -72,7 +72,7 @@ export const LevelSettings = () => {
       setTickError("");
       await updateLevel({
         name: level,
-        id: sizeContainer,
+        boardId: sizeContainer,
         points: points,
         time: time,
         tick: tick,
@@ -81,12 +81,13 @@ export const LevelSettings = () => {
       })
 
       console.log({
-        level,
-        sizeContainer,
-        tick,
-        time: time, //100 значение из бд
-        points: points, //100 значение из бд,
-        nextFigureVisibility
+        name: level,
+        id: sizeContainer,
+        points: points,
+        time: time,
+        tick: tick,
+        isGridShown: gridVisibility,
+        isNextFigureShown: nextFigureVisibility
       })
       navigate(-1);  
     } else {

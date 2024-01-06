@@ -46,6 +46,8 @@ export const useGameStats = (level: number, times: number[] , points: number[], 
         pointsPerLevel = level > previous.level ? previous.points[level - 1] : pointsPerLevel;
       }      
       if (level === 3) pointsPerLevel = 0;
+      const jsonString = JSON.stringify({score, seconds: previous.seconds});
+      localStorage.setItem('score', jsonString);
       return {
         variant: previous.variant,
         points: previous.points,
@@ -73,6 +75,8 @@ export const useGameStats = (level: number, times: number[] , points: number[], 
         secondsToLevel = level > previous.level ? previous.times[level - 1] : secondsToLevel;
       }      
       if (level === 3) secondsToLevel = 0;
+      const jsonString = JSON.stringify({score: previous.score, seconds});
+      localStorage.setItem('score', jsonString);
       return {
         variant: previous.variant,
         points: previous.points,

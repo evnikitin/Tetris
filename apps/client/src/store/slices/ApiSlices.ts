@@ -22,8 +22,11 @@ export interface AddFigure{
 }
 
 export interface Board extends CreateBoard{
-  id: string,
-  
+  id: string,  
+}
+
+export interface Board extends CreateBoard{
+  id: string,  
 }
 
 export interface CreateBoard{
@@ -68,9 +71,15 @@ export interface Level{
   isGridShown: boolean
 }
 
+export interface FetchScore{
+  pointsRecord: number,
+  timeRecord: number,
+  id: string
+}
+
 export interface FetchLevel{
   name: string,
-  id: string,
+  boardId: string,
   points: number,
   tick: number,
   time: number,
@@ -193,6 +202,13 @@ export interface FetchLevel{
         body: { ...credentials },
       }),
     }),  
+    saveScore: builder.mutation<any, FetchScore>({
+      query: (credentials) => ({
+        url: `/user/update-user-records/6c844136-b24d-4692-9e56-2e6bdfbec878`,
+        method: 'POST',
+        body: { ...credentials },
+      }),
+    }),  
    }),
  });
  
@@ -208,6 +224,7 @@ export interface FetchLevel{
    useGetLevelQuery,
    useUpdateLevelMutation,
    useGetLevelsMutation,
-   useGetBoardsMutation
+   useGetBoardsMutation,
+   useSaveScoreMutation
  } = apiSlice;
  
