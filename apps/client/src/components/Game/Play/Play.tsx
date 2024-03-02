@@ -1,7 +1,5 @@
 import Menu from "../Menu/Menu";
 import { Tetris } from "../Tetris/Tetris";
-import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../../../store/slices/AuthSlice";
 import { useSaveScoreMutation } from "../../../store/slices/ApiSlices";
 
 import { useGameOver } from "../../../hooks/useGameOver";
@@ -11,20 +9,15 @@ import { UserSettings } from '../../../hooks/useSettings'
 
  const Result = ({gameOver}: {gameOver: boolean}) => {
   const [saveScore] = useSaveScoreMutation();
-  
-  const id = useSelector(selectCurrentToken);
-  if(id){
-    const {sub} = JSON.parse(atob(id));
-    console.log(sub);
-  }
-  
+    
   if (gameOver){
     const storedJsonString = localStorage.getItem('score');
-    const id = localStorage.getItem('id');
-    if(storedJsonString && id){
+    const jsonId = localStorage.getItem('id');
+    if(storedJsonString && jsonId){
       const storedDifficultyLevels = JSON.parse(storedJsonString);
-      console.log(storedDifficultyLevels)
-      saveScore({...storedDifficultyLevels, id})
+      const id = JSON.parse(jsonId);
+      console.log(storedDifficultyLevels, id)
+      saveScore({...storedDifficultyLevels, ...id})
     }
     
   }

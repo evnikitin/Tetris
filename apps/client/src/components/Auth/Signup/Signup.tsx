@@ -54,6 +54,8 @@ export function Signup() {
       token_string = token_string.slice(0, token_string.lastIndexOf(".")).slice(token_string.indexOf(".") + 1, token_string.length);
       console.log(token_string);
       const res = JSON.parse(atob(token_string)); 
+      const jsonString = JSON.stringify({id:res.sub});
+      localStorage.setItem('id', jsonString);
       console.log(res);
       dispatch(setCredentials({ user: {name: data.name, role: res.role}, accessToken: token_string}));
       navigate('/');  

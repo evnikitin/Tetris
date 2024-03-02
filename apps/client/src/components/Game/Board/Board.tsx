@@ -11,15 +11,16 @@ export interface Board{
 
 export interface BoardProps{
   board : Board,  
-  settings: UserSettings
+  settings: UserSettings,
+  allowGrid: boolean,
 }
 
-export const Board = ({ board, settings } : BoardProps) => {  
+export const Board = ({ board, settings, allowGrid } : BoardProps) => {  
     return (
       <BoardStyled backgroundColor={settings.color} rows={board.size.rows} columns={board.size.columns}>
         {board.rows.map((row, y) =>
           row.map((cell, x) => (
-            <BoardCell key={x * board.size.columns + x} cell={cell} gridVisibility={settings.gridVisibility}/>
+            <BoardCell key={x * board.size.columns + x} cell={cell} gridVisibility={allowGrid && settings.gridVisibility}/>
           ))
         )}
       </BoardStyled>

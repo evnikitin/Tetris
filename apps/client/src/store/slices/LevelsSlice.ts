@@ -16,7 +16,7 @@ type RootState = {
    level: LevelState
 };
 const initialState: LevelState = {
-   board: null,  // Assumes no board to begin with
+   board: null, 
    points: [],
    tickes: [],
    times: [],

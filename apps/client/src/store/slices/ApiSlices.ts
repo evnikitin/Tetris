@@ -204,7 +204,7 @@ export interface FetchLevel{
     }),  
     saveScore: builder.mutation<any, FetchScore>({
       query: (credentials) => ({
-        url: `/user/update-user-records/6c844136-b24d-4692-9e56-2e6bdfbec878`,
+        url: `/user/update-user-records/${credentials.id}`,
         method: 'POST',
         body: { ...credentials },
       }),
